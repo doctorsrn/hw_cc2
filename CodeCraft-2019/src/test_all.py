@@ -21,16 +21,16 @@ def main():
     preset_answer_path = rpath + '/presetAnswer.txt'
 
     cross_df = read_cross_from_txt(cross_path)
-    print(cross_df.head())
-    print(cross_df.shape)
+    # print(cross_df.head())
+    # print(cross_df.shape)
 
     road_df = read_road_from_txt(road_path)
-    print(road_df.head())
-    print(road_df.shape)
+    # print(road_df.head())
+    # print(road_df.shape)
 
     car_df = read_car_from_txt(car_path)
-    print(car_df.head())
-    print(car_df.shape)
+    # print(car_df.head())
+    # print(car_df.shape)
 
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
     
@@ -55,7 +55,8 @@ def main():
 
     # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
     # paths = getallpaths_dj_cw2(al, road_df, car_df_actual)
-    paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'])
+    # paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'])
+    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     print(len(paths))
     t2 = time.clock()
