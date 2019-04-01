@@ -308,7 +308,7 @@ def get_time_plan5(car_df):
     分批出发，某一时刻发车数量多于一定数量顺延
     '''
     # 最优参数
-    controlcarnum = 100  # weight_factor=0.08 37 39:414 414  42:405 fail 41: 422 421  40:420 416
+    controlcarnum = 50  # weight_factor=0.08 37 39:414 414  42:405 fail 41: 422 421  40:420 416
                         # weight_factor=0.1  42: 415 fail
     temp = 0
 
@@ -317,7 +317,8 @@ def get_time_plan5(car_df):
     # 根据每辆车的计划出发时间进行升序排列 速度降序排列 id升序
     # car_df_sort = car_df.sort_values(by=['planTime', 'speed', 'id'], axis=0, ascending=[True, False, True])
     # 根据每辆车的速度降序排列 id升序
-    car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
+    # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
+    car_df_sort = car_df.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
     # print(car_df_sort.head(20))
 
     i = 1
@@ -325,7 +326,7 @@ def get_time_plan5(car_df):
     idtime = -1
 
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
-        idtime = max(timemax_last, pT)
+        idtime = max(timemax_last, pT)+1500
         time_plans[carID] = [carID, idtime]
         # car_df_sort.loc[carID, 'planTime'] = idtime  # 记录实际安排的出发时间
         car_df_sort['planTime'][carID] = idtime
@@ -337,11 +338,11 @@ def get_time_plan5(car_df):
         if (i % controlcarnum) == 0:
             temp = temp+1
             if temp < 3:   # 3     5
-                controlcarnum = 80
+                controlcarnum = 10
             elif temp < 6: # 6     10 386 failed
-                controlcarnum = 60
+                controlcarnum = 7
             else:
-                controlcarnum = 25 #45
+                controlcarnum = 1 #45
                 #3 6 40s 42f 41s(410,414) 38s(416,415)
                 # 5 10 40f 386
 

@@ -13,7 +13,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 def main():
 
-    rpath = '../config2'
+    rpath = '../config1'
     cross_path = rpath + '/cross.txt'
     road_path = rpath + '/road.txt'
     car_path = rpath + '/car.txt'
@@ -50,13 +50,13 @@ def main():
 
     start_time = time.clock()
     time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
-
+    # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     t1 = time.clock()
 
     # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
     # paths = getallpaths_dj_cw2(al, road_df, car_df_actual)
-    # paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'])
-    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
+    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     print(len(paths))
     t2 = time.clock()

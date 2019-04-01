@@ -1646,7 +1646,7 @@ def get_path(adl_list_w, start, end, use_networkx=False):
     return path
 
 
-def get_all_cars_paths(adl_list, carIDL, startL, endL, use_networkx=True):
+def get_all_cars_paths(adl_list, carIDL, startL, endL, use_networkx=False):
     """
     brief: 获取所有车的一条最短路径
     :param adl_list: 带有边ID的邻接表
@@ -1657,7 +1657,7 @@ def get_all_cars_paths(adl_list, carIDL, startL, endL, use_networkx=True):
     :return: paths: 数据格式:字典{carID： [edge path]}
     """
     # 检查传入的参数是否合理
-    if not len(carIDL) == len(startL) ==len(endL):
+    if not len(carIDL) == len(startL) == len(endL):
         raise Exception("input size of  carIDL, startL, endL not equal")
 
     global USE_NETWORKX
@@ -1801,16 +1801,19 @@ def get_time_plan2(car_df):
     time_plans = {}
 
     # 根据每辆车的计划出发时间进行升序排列
-    car_df_sort = car_df.sort_values(by='planTime', axis=0, ascending=True)
-
+    car_df_sort = car_df.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0,
+                                     ascending=[True, False, False, True])
+    lastTime = 0
     i = 1
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
         i += 1
-        pT += i*100
+        pT += i*10
+        lastTime = pT
 
         time_plans[carID] = [carID, pT]
-
-    return time_plans
+        car_df_sort['planTime'][carID] = pT
+    print('last time：', lastTime)
+    return time_plans, car_df_sort
 
 
 def get_answer(car_list, path_plan, time_plan):

@@ -39,10 +39,11 @@ def main():
     # process
     al = build_adjacency_list(cross_df, road_df)
 
-    car_not_preset_df = car_df.loc[car_df['preset'] != 1]
+    car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
 
     time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
-    # paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'])
+    # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
+    # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
     paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)

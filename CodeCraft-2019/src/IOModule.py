@@ -101,7 +101,7 @@ if __name__ == "__main__":
     path2 = rpath + '/car.txt'
     path3 = rpath + '/answer.txt'
     # preset_answer_path = rpath + '/presetAnswer.txt'
-    preset_answer_path = '/home/srn/SRn/Competition/HUAWei2/SDK_python/CodeCraft-2019/config1/presetAnswer.txt'
+    preset_answer_path_ = '/home/srn/SRn/Competition/HUAWei2/SDK_python/CodeCraft-2019/config1/presetAnswer.txt'
 
 #    cross_df = read_from_txt(path)
 #    print(cross_df.head())
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 #    print(car_df.head())
 #    print(car_df.shape)
     
-    pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+    pre_answer_df = read_preset_answer_from_txt(preset_answer_path_)
     
     
 

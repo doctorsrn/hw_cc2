@@ -9,24 +9,46 @@ from IOModule import *
 import matplotlib.pyplot as plt
 
 
-rpath = '../config1'
+rpath = '../config2'
 cross_path = rpath + '/cross.txt'
 road_path = rpath + '/road.txt'
 car_path = rpath + '/car.txt'
 answer_path = rpath + '/answer.txt'
+preset_answer_path = rpath + '/presetAnswer.txt'
 
 cross_df = read_cross_from_txt(cross_path)
-print(cross_df.head())
-print(cross_df.shape)
+#print(cross_df.head())
+#print(cross_df.shape)
 
 road_df = read_road_from_txt(road_path)
-print(road_df.head())
-print(road_df.shape)
+#print(road_df.head())
+#print(road_df.shape)
 
 car_df = read_car_from_txt(car_path)
-print(car_df.head())
-print(car_df.shape)
+#print(car_df.head())
+#print(car_df.shape)
 
+pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+
+# 对所有车辆进行分析
+speed_max = car_df.speed.max()
+speed_min = car_df.speed.min()
+pT_max = car_df.planTime.max()
+pT_min = car_df.planTime.min()
+
+# 对优先级车辆进行分析
+car_priority_df = car_df.loc[car_df['priority'] > 0]
+p_speed_max = car_priority_df.speed.max()
+p_speed_min = car_priority_df.speed.min()
+p_pT_max = car_priority_df.planTime.max()
+p_pT_min = car_priority_df.planTime.min()
+
+print("all cars max,min speed:", speed_max, speed_min)
+print("priority cars max,min speed:", p_speed_max, p_speed_min)
+print("all cars max,min planTime:", pT_max, pT_min)
+print("priority cars max,min planTime:", p_pT_max, p_pT_min)
+
+print("preset cars shape:", pre_answer_df.shape)
 
 # 对道路进行数据分析
 plt.figure(1, figsize=(6, 12))
@@ -194,8 +216,9 @@ ax4 = plt.subplot(3,2,4)
 ax5 = plt.subplot(3,2,5)
 ax6 = plt.subplot(3,2,6)
 
-car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
-car_max_speed = car_df_sort.loc[car_df_sort['speed'] > 7]
+#car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
+#car_max_speed = car_df_sort.loc[car_df_sort['speed'] > 7]
+# car_priority_df
 # #统计车辆起始站点间路口数
 # car_df['distance'] = car_df.apply(lambda x: abs(x['to'] - x['from']), axis=1)
 
@@ -204,8 +227,16 @@ plt.tight_layout(1.5, 1.5, 1.5)
 plt.subplots_adjust(wspace =0.3, hspace =0.6)
 
 plt.sca(ax1)
-plt.scatter(list(car_max_speed['from']), list(car_max_speed['to']))
-plt.title('max speed from-to distribution')
+plt.scatter(list(car_priority_df['from']), list(car_priority_df['to']))
+plt.title('car_priority_df from-to distribution')
 plt.xlabel('car from')
 plt.ylabel('car to')
+
+plt.sca(ax2)
+pre_answer_df['planTime'].plot.hist(grid=True, bins=20, rwidth=0.9,
+     color='#607c8e')
+plt.title('preset car planTime distribution')
+plt.xlabel('planTime')
+plt.ylabel('Count Times')
+plt.grid(axis='y', alpha=0.75)
 plt.show()
