@@ -110,5 +110,5 @@ CodeCraft-2019/config*/*
 #/SDK_python/.gitignore
 
 CodeCraft-2019/src/__pycache__/*
-
+CodeCraft-2019/src/.idea/*
 
