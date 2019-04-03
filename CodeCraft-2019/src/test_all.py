@@ -13,7 +13,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 def main():
 
-    rpath = '../config1'
+    rpath = '../config2'
     cross_path = rpath + '/cross.txt'
     road_path = rpath + '/road.txt'
     car_path = rpath + '/car.txt'
@@ -33,6 +33,8 @@ def main():
     # print(car_df.shape)
 
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+
+    pre_paths = pre_answer_df['path'].to_dict()
     
     
 
@@ -40,11 +42,13 @@ def main():
     df1 = road_df
     df = cross_df
 
-    car_not_preset_df = car_df.loc[car_df['preset'] != 1]
-    print(car_not_preset_df.head())
+    car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
+    car_preset_df = car_df.loc[car_df['preset'] == 1].copy(deep=True)
+    # print(car_not_preset_df.head())
 
     al = build_adjacency_list(cross_df, road_df)
 
+    # time_plans, paths = super_time_plan(pre_paths, car_preset_df, road_df, cross_df, al)
 
     # final test
 
@@ -55,8 +59,8 @@ def main():
 
     # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
     # paths = getallpaths_dj_cw2(al, road_df, car_df_actual)
-    paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
+    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     print(len(paths))
     t2 = time.clock()
