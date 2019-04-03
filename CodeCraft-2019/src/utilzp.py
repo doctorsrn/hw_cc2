@@ -349,8 +349,8 @@ def get_time_plan5(car_df):
             elif temp < 6: # 6     10 386 failed
                 controlcarnum = 7
             else:
-                controlcarnum = 10 #45  2-succeed 10-failed
-                #3 6 40s 42f 41s(410,414) 38s(416,415)
+                controlcarnum = 6   # 45  2-succeed 10-failed  6-succeed
+                # 3 6 40s 42f 41s(410,414) 38s(416,415)
                 # 5 10 40f 386
 
 
