@@ -44,10 +44,11 @@ def main():
 
     car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
     car_preset_df = car_df.loc[car_df['preset'] == 1].copy(deep=True)
-    print(car_not_preset_df.head())
+    # print(car_not_preset_df.head())
 
     al = build_adjacency_list(cross_df, road_df)
 
+    # time_plans, paths = super_time_plan(pre_paths, car_preset_df, road_df, cross_df, al)
 
     # final test
 
