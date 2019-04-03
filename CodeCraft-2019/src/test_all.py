@@ -33,6 +33,8 @@ def main():
     # print(car_df.shape)
 
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+
+    pre_paths = pre_answer_df['path'].to_dict()
     
     
 
@@ -40,7 +42,8 @@ def main():
     df1 = road_df
     df = cross_df
 
-    car_not_preset_df = car_df.loc[car_df['preset'] != 1]
+    car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
+    car_preset_df = car_df.loc[car_df['preset'] == 1].copy(deep=True)
     print(car_not_preset_df.head())
 
     al = build_adjacency_list(cross_df, road_df)
