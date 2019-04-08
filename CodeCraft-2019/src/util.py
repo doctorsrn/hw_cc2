@@ -241,6 +241,9 @@ def get_path_n2e(path_n, ad_list):
         raise Exception("cannot get edge path from empty node path")
     return path_e
 
+def get_path_e2n(carid,path_e,road_df, car_df_sort):
+    #待补充
+
 
 def get_node_from_pairs(pairs_):
     """
@@ -1142,6 +1145,76 @@ def getallpaths_dj_cw2(adl_list, road_df, cardf, use_networkx=False):
 
     return paths_e
 
+
+def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
+    # 每规划一辆车的路径，所经过的路上权重增加addvalue
+    # 根据车速和道路速度的倒数来变权重
+    # 达到interval时恢复原来的权重
+
+    # 根据每辆车的计划出发时间进行升序排列 是否优先 速度降序排列 id升序排列
+    car_df_sort = cardf.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
+    # print(car_df_sort.head(10))
+
+    carIDL = car_df_sort['id']
+    startL = car_df_sort['from']
+    endL = car_df_sort['to']
+    carnum = carIDL.shape[0]
+
+    adl_list_w = convert_adl2adl_w(adl_list)
+
+    # 深拷贝
+    tempdict = copy.deepcopy(adl_list_w)
+
+    # 最优参数 9
+    shares = 5
+    interval = int(carnum / shares)
+
+    paths_e = {}
+
+    i = 1
+
+    # 为所有车各规划一条最短路径
+    for carID, st, ed in zip(carIDL, startL, endL):
+        if carID not in preset_carlist:
+            path_n = shortest_path(tempdict, st, ed)
+            # 将规划得到的节点构成的路径转换为边构成的路径
+            path_e = get_path_n2e(path_n, adl_list)
+        else:
+            path_e = pre_answer_df[carID]['path']
+            # 将预置车辆由边构成的路径转化为由节点构成的路径
+            path_e = get_path_e2n(path_n, adl_list)
+
+
+
+        paths_e[carID] = path_e
+
+        # 更新权重
+        if (i % interval) == 0:
+            # 深拷贝
+            tempdict = copy.deepcopy(adl_list_w)
+        else:
+
+            carspeed = cardf['speed'][carID]
+            for k in range(len(path_n) - 1):
+                cross_last = path_n[k]
+                cross_next = path_n[k + 1]
+                # print(tempdict[cross_last][cross_next])
+
+                roadname = adl_list[cross_last][cross_next][0]
+                # print(roadname)
+                maxspeed = min(road_df['speed'][roadname], carspeed)
+
+                addvalue = 1/(maxspeed*road_df['channel'][roadname])
+
+                # addvalue = road_df['length'][roadname] / (maxspeed * road_df['channel'][roadname])
+
+                tempdict[cross_last][cross_next] += addvalue
+
+                # print(tempdict[cross_last][cross_next])
+
+        i += 1
+
+    return paths_e
 
 def get_all_cars_paths_cw(adl_list, cardf, use_networkx=True):
     """
