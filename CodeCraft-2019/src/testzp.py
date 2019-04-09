@@ -70,6 +70,7 @@ def main():
     # paths = getallpaths_dj_cw(ad_l, road_df, car_df_actual)
     # paths = getallpaths_dj_cw2(ad_l, road_df, car_df_actual)
     paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
+    # paths = getallpaths_dj_cw3_slide(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
 
 
     # # 时间安排重规划

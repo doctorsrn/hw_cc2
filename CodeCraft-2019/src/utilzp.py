@@ -427,7 +427,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                                                          ascending=[True, False, True])
     # print(cardf_preset_sort.head(20))
     # 非预置车辆根据每辆车是否优先 速度降序排列 id升序
-    cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
+    cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority','speed', 'id'], axis=0,
                                      ascending=[False, False, True])
     # print(cardf_notpreset_sort.head(20))
 
