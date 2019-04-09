@@ -402,9 +402,10 @@ def get_time_plan8(car_df):
 def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     '''
     分批出发，某一时刻发车数量多于一定数量顺延
+    先发预置车辆，再发非预置车辆
     '''
     # 最优参数
-    controlcarnum = 10
+    controlcarnum = 15
 
     temp = 0
 
@@ -428,7 +429,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # print(cardf_notpreset_sort.head(20))
 
 
-    #预置车辆列表
+    #记录未规划出发时间车辆列表
     preset_carlist = list(cardf_preset_sort['id'])   #保存还未安排过出发时间的预置车辆ID
     print("preset carnum ", len(preset_carlist))
     notpreset_carlist = list(cardf_notpreset_sort['id'])    #保存还未安排过出发时间的非预置车辆ID
@@ -437,6 +438,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
 
     time = 1
     while preset_carlist != []:
+        #预置车辆发车数目大于carcontrolnum不安排其他车辆，否则将非预置车辆time时刻的安排其中
         choosebyplantime_preset = cardf_preset_sort[cardf_preset_sort.planTime == time]
         choosebyplantime_preset_carlist = list(choosebyplantime_preset['id'])
 
