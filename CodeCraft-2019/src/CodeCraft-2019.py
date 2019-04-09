@@ -54,6 +54,13 @@ def main():
     car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
     notpreset_carlist = list(car_not_preset_df['id'])
 
+    # 记录预置车辆实际出发时间
+    # 将car_df_sort中预置车辆plantime改为presetAnswer中的数值
+    for carid in preset_carlist:
+        car_df['planTime'][carid] = pre_answer_df[carid]['planTime']
+        car_preset_df['planTime'][carid] = pre_answer_df[carid]['planTime']
+
+
     # get time plans
 
     # 目前效果最好的为 get_time_plan5

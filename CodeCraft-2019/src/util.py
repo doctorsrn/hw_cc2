@@ -1196,6 +1196,10 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
     shares = 0.5
     interval = int(carnum / shares)
 
+    # addvalue = factor/(maxspeed*road_df['channel'][roadname])
+    # 默认设为1.0
+    factor = 1.0
+
     paths_e = {}
 
     i = 1
@@ -1230,7 +1234,7 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
                 # print(roadname)
                 maxspeed = min(road_df['speed'][roadname], carspeed)
 
-                addvalue = 1/(maxspeed*road_df['channel'][roadname])
+                addvalue = factor/(maxspeed*road_df['channel'][roadname])
 
                 # addvalue = road_df['length'][roadname] / (maxspeed * road_df['channel'][roadname])
 
