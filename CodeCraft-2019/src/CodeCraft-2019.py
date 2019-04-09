@@ -37,7 +37,7 @@ def main():
     cross_df = read_cross_from_txt(cross_path)
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path, return_dict=False)
 
-# process
+    # process
 
     # build adjacency list
 
@@ -47,15 +47,21 @@ def main():
     # ad_l = build_adjacency_list3(cross_df, road_df)
     ad_l = build_adjacency_list4(cross_df, road_df)
 
+    # 取出预置车辆
+    car_preset_df = car_df.loc[car_df['preset'] == 1].copy(deep=True)
+    preset_carlist = list(car_preset_df['id'])
+    # 取出非预置车辆
     car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
+    notpreset_carlist = list(car_not_preset_df['id'])
 
     # get time plans
 
     # 目前效果最好的为 get_time_plan5
-    time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
+    # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan6(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan7(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan8(car_not_preset_df)
+    time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
 
     # print(car_df_actual.head(100))
 
@@ -69,7 +75,8 @@ def main():
     # paths = get_all_paths_with_hc(ad_l, road_df, car_df['id'], car_df['from'], car_df['to'])
     # paths = get_all_paths_with_hc_cw(ad_l, road_df, car_df_actual)
     # paths = getallpaths_dj_cw(ad_l, road_df, car_df_actual)
-    paths = getallpaths_dj_cw2(ad_l, road_df, car_df_actual)
+    # paths = getallpaths_dj_cw2(ad_l, road_df, car_df_actual)
+    paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
 
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)
 

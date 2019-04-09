@@ -404,7 +404,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     分批出发，某一时刻发车数量多于一定数量顺延
     '''
     # 最优参数
-    controlcarnum = 20
+    controlcarnum = 10
 
     temp = 0
 
@@ -421,18 +421,18 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 预置车辆根据每辆车出发时间升序 是否优先  id升序
     cardf_preset_sort = car_preset_df.sort_values(by=['planTime', 'priority', 'id'], axis=0,
                                                          ascending=[True, False, True])
-    print(cardf_preset_sort.head(20))
+    # print(cardf_preset_sort.head(20))
     # 非预置车辆根据每辆车是否优先 速度降序排列 id升序
     cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
                                      ascending=[ False, False, True])
-    print(cardf_notpreset_sort.head(20))
+    # print(cardf_notpreset_sort.head(20))
 
 
     #预置车辆列表
     preset_carlist = list(cardf_preset_sort['id'])   #保存还未安排过出发时间的预置车辆ID
-    print(len(preset_carlist))
+    print("preset carnum ", len(preset_carlist))
     notpreset_carlist = list(cardf_notpreset_sort['id'])    #保存还未安排过出发时间的非预置车辆ID
-    print(len(notpreset_carlist))
+    print("not preset carnum ", len(notpreset_carlist))
 
 
     time = 1
@@ -455,13 +455,14 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
             choosebyplantime_notpreset_carlist = list(choosebyplantime_notpreset['id'])
             # print(choosebyplantime_notpreset.head(5))
 
+            notpresetnum_time=len(choosebyplantime_notpreset_carlist)
             for i in range(controlcarnum - presetnum_time):
-                try:
-                    carid = notpreset_carlist[0]
-                    car_df_sort['planTime'][carid] = time  # 记录实际安排的出发时间
+                if i < notpresetnum_time:
+                    carid = choosebyplantime_notpreset_carlist[i]   #选择time时刻cardf_notpreset_sort优先级最高的车辆
+                    # car_df_sort['planTime'][carid] = time  # 记录实际安排的出发时间
                     notpreset_carlist.remove(carid)
-                except:
-                    print("notpreset_carlist is empty")
+                else:
+                    print("choosebyplantime_notpreset_carlist is not enough")
 
             for carid in choosebyplantime_preset_carlist:
                 preset_carlist.remove(carid)  # 删除原始列表中的预置车辆
@@ -473,7 +474,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     while notpreset_carlist != []:
         i = 1
         for carID, pT in zip(cardf_notpreset_sort['id'], cardf_notpreset_sort['planTime']):
-            if carID not in notpreset_carlist:
+            if carID not in notpreset_carlist:   #只为在notpreset_carlist列表里的车辆规划出发时间
                 continue
             else:
                 idtime = max(time, pT)
@@ -492,7 +493,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
 
 
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
-        time_plans[carID] = [carID, idtime]
+        time_plans[carID] = [carID, pT]
 
     print("max plantime: ", time)
     return time_plans, car_df_sort

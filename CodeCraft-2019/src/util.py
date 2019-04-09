@@ -242,7 +242,33 @@ def get_path_n2e(path_n, ad_list):
     return path_e
 
 def get_path_e2n(carid,path_e,road_df, car_df_sort):
-    #待补充
+    #将边路径转化为节点路径
+    path_n = []
+    startcross = car_df_sort['from'][carid]
+    endcross = car_df_sort['to'][carid]
+    path_n.append(startcross)
+    cross_last = startcross
+    for road in path_e:
+        roadstartcross = road_df['from'][road]
+        roadendcross = road_df['to'][road]
+        if roadstartcross == cross_last:
+            cross_next = roadendcross
+        else:
+            if road_df['isDuplex'][road] == 1:
+                if roadendcross == cross_last:
+                    cross_next = roadstartcross
+                else:
+                    print("cross ", cross_last, " not link to road ", road)
+                    exit()
+            else:
+                print("cross ", cross_last, " not link to road ", road)
+                exit()
+        path_n.append(cross_next)
+        cross_last = cross_next
+        if cross_last == endcross:
+            break
+
+    return path_n
 
 
 def get_node_from_pairs(pairs_):
@@ -1179,14 +1205,13 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
             path_n = shortest_path(tempdict, st, ed)
             # 将规划得到的节点构成的路径转换为边构成的路径
             path_e = get_path_n2e(path_n, adl_list)
+            # 保存非预置车辆边路径
+            paths_e[carID] = path_e
         else:
             path_e = pre_answer_df[carID]['path']
             # 将预置车辆由边构成的路径转化为由节点构成的路径
-            path_e = get_path_e2n(path_n, adl_list)
+            path_n = get_path_e2n(carID, path_e, road_df, car_df_sort)
 
-
-
-        paths_e[carID] = path_e
 
         # 更新权重
         if (i % interval) == 0:
