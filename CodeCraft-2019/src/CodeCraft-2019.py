@@ -45,7 +45,8 @@ def main():
     time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
+    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)
 

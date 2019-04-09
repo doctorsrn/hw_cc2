@@ -453,7 +453,7 @@ def update_weight(adwE_, path_n_, typeU=0, weight_factor=0.1):
     return adwE_
 
 
-def get_bestHCHP(dp_pairs, searchNum=200, n=3, bestType=0):
+def get_bestHCHP(dp_pairs, searchNum=400, n=5, bestType=0):
     """
     从给定的双向对中获取最佳的HC和HP
     :pairs: 双向对
@@ -779,12 +779,15 @@ def get_all_paths_with_hc(adl_list, road_df, carIDL, startL, endL, use_networkx=
 
     # 剪枝
     dp, sp, rp = cut_adjacency_list(adl_list, road_df, cut_channel_level=0, cut_speed_level=1)
+    # print(dp)
     
     _, hc = get_bestHCHP(dp)
+    # print(hc)
+    # exit(0)
 
     # 基于get_path_with_hp()函数进行路径规划
     # 为所有车各规划一条最短路径
-    print("\nget_all_paths_with_hc:")
+    # print("\nget_all_paths_with_hc:")
     for carID, st, ed in tqdm(zip(carIDL, startL, endL)):
         try:
 #            path_n = get_path_with_hp(new_ad, adl_list, hp, st, ed)

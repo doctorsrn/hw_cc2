@@ -180,8 +180,8 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
     # global g_cars_pool
     # global g_cars_pool1
     # global g_road_used
-    time_slice_num = 4000
-
+    time_slice_num = 5000
+    start_time = time.clock()
     # 存储路径和时间规划结果
     paths_fianl = {}
     time_final = {}
@@ -311,7 +311,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
 
                 # TODO: 此处可以优化，将rest_place_threshold提前加到road_status_cap1中，
                 #  然后比较road_status_cap1[start_road] > len(road_status['cars1'][start_road])是否成立
-                if road_status_cap1[start_road] - len(road_status['cars1'][start_road]) > rest_place_threshold:
+                if road_status_cap1[start_road] - (road_status['cars1'][start_road]).__len__() > rest_place_threshold:
                     # print(1)
                     # 可以发车
                     # 更新车的状态，更新发车池的状态、更新道路使用的状态
@@ -338,7 +338,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
 
             elif road_df_from[start_road] in [road_df_from[next_road], road_df_to[next_road]]:
                 #                if road_status['cap2'][start_road] - road_status['used2'][start_road] > 2:
-                if road_status_cap2[start_road] - len(road_status['cars2'][start_road]) > rest_place_threshold:
+                if road_status_cap2[start_road] - (road_status['cars2'][start_road]).__len__() > rest_place_threshold:
                     # print(2)
                     # 可以发车
                     # 更新车的状态，更新发车池的状态、更新道路使用的状态
@@ -391,8 +391,8 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
         # car_status['status']、road_status
 
         # 筛选出路上有车的路
-        road_status['used1'] = road_status.apply(lambda x: (len(x['cars1'])), axis=1)
-        road_status['used2'] = road_status.apply(lambda x: (len(x['cars2'])), axis=1)
+        road_status['used1'] = road_status.apply(lambda x: ((x['cars1']).__len__()), axis=1)
+        road_status['used2'] = road_status.apply(lambda x: ((x['cars2']).__len__()), axis=1)
         #        road_used = deepcopy(road_status.loc[(road_status['used1'] > 0) | (road_status['used2'] > 0)])
         road_used = road_status.loc[(road_status['used1'] > 0) | (road_status['used2'] > 0)].copy(deep=True)
         #        road_used = road_status.loc[(len(road_status['cars1']) > 0) | (len(road_status['cars2']) > 0)].copy(deep=True)
@@ -407,13 +407,13 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
             # print(road_id)
             # 更新道路上的车
             #            if road_used['used1'][road_id] > 0:
-            if len(road_used_cars1[road_id]) > 0:
+            if (road_used_cars1[road_id]).__len__() > 0:
                 #                car_on_road = deepcopy(road_used['cars1'][road_id])
                 #                for car, posi in car_on_road.items():
                 car_on_road = list(road_used_cars1[road_id].items())
+                road_len = road_status_length[road_id]
                 for car, posi in car_on_road:
                     car_debug = car
-                    road_len = road_status_length[road_id]
                     #                    car_speed = car_status['speed'][car]
                     car_speed = car_df_speed[car]
                     car_path = paths[car]
@@ -453,13 +453,14 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
                                 paths_fianl[car].append(edge)
                             else:
                                 paths_fianl[car] = [edge]
+
                             continue
 
                         # 判断下一条路的空位
                         # 先判断方向
                         if road_df_to[road_id] == road_df_from[next_road]:
                             #                            if road_status['cap1'][next_road] - road_status['used1'][next_road] > 2:
-                            if road_status_cap1[next_road] - len(road_status['cars1'][next_road]) > rest_place_threshold:
+                            if road_status_cap1[next_road] - (road_status['cars1'][next_road]).__len__() > rest_place_threshold:
                                 # 下一条路满足进入要求，进入下一条路
                                 road_status.at[next_road, 'cars1'].update({car: next_posi})  # 为下一条路添加车信息
                                 #                                road_status.loc[next_road, 'used1'] += 1
@@ -488,7 +489,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
                         # 另一个方向
                         elif road_df_to[road_id] == road_df_to[next_road]:
                             #                            if road_status['cap2'][next_road] - road_status['used2'][next_road] > 2:
-                            if road_status_cap2[next_road] - len(road_status['cars2'][next_road]) > rest_place_threshold:
+                            if road_status_cap2[next_road] - (road_status['cars2'][next_road]).__len__() > rest_place_threshold:
                                 # 下一条路满足进入要求，进入下一条路
                                 road_status.at[next_road, 'cars2'].update({car: next_posi})  # 为下一条路添加车信息
                                 #                                road_status.loc[next_road, 'used2'] += 1
@@ -518,13 +519,14 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
                                 # TODO： 考虑重规划路径
 
             #            if road_used['used2'][road_id] > 0:
-            if len(road_used_cars2[road_id]) > 0:
+            if (road_used_cars2[road_id]).__len__() > 0:
                 #                car_on_road = deepcopy(road_used['cars2'][road_id])
                 #                for car, posi in car_on_road.items():
                 car_on_road = list(road_used_cars2[road_id].items())
+                road_len = road_status_length[road_id]
                 for car, posi in car_on_road:
                     car_debug = car
-                    road_len = road_status_length[road_id]
+
                     #                    car_speed = car_status['speed'][car]
                     car_speed = car_df_speed[car]
                     car_path = paths[car]
@@ -572,7 +574,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
                         # 先判断方向
                         if road_df_from[road_id] == road_df_from[next_road]:
                             #                            if road_status['cap1'][next_road] - road_status['used1'][next_road] > 2:
-                            if road_status_cap1[next_road] - len(road_status['cars1'][next_road]) > rest_place_threshold:
+                            if road_status_cap1[next_road] - (road_status['cars1'][next_road]).__len__() > rest_place_threshold:
                                 # 下一条路满足进入要求，进入下一条路
                                 road_status.at[next_road, 'cars1'].update({car: next_posi})  # 为下一条路添加车信息
                                 #                                road_status.loc[next_road, 'used1'] += 1
@@ -604,7 +606,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
                         # 另一个方向
                         elif road_df_from[road_id] == road_df_to[next_road]:
                             #                            if road_status['cap2'][next_road] - road_status['used2'][next_road] > 2:
-                            if road_status_cap2[next_road] - len(road_status['cars2'][next_road]) > rest_place_threshold:
+                            if road_status_cap2[next_road] - (road_status['cars2'][next_road]).__len__() > rest_place_threshold:
                                 # 下一条路满足进入要求，进入下一条路
                                 road_status.at[next_road, 'cars2'].update({car: next_posi})  # 为下一条路添加车信息
                                 #                                road_status.loc[next_road, 'used2'] += 1
@@ -651,7 +653,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
         ## 重建邻接表
         # 找出拥挤道路,删除其邻接关系
         road_status['cut'] = road_status.apply(
-            lambda x: 1 if x['cap1'] - len(x['cars1']) < rest_place_threshold or (rest_place_threshold > x['cap2'] - len(x['cars2']) > 0) else 0, axis=1)
+            lambda x: 1 if x['cap1'] - (x['cars1']).__len__() < rest_place_threshold or (rest_place_threshold > x['cap2'] - (x['cars2']).__len__() > 0) else 0, axis=1)
         road_cut = road_status.loc[road_status['cut'] == 1]
         adl_cut = cut_adl(adwE, road_cut)
         # print(len(adl_cut))
@@ -662,6 +664,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None):
         # if sum(road_status['cars1'] != {}) + sum(road_status['cars2'] != {}) == 0:
         print(i)
         # if i > 50:
+        #     print("time cost:", time.clock() - start_time)
         #     break
 
         if i > 50:
