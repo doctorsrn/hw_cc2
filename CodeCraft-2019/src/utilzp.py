@@ -411,7 +411,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 车辆发车策略分三种控制参数
     controlcarnum_preset = 15  #有预置车辆且该时刻有车
     controlcarnum_free = 15  #有预置车辆且该时刻无车
-    controlcarnum_oridinary = 35  #无预置车辆
+    controlcarnum_oridinary = 36  #无预置车辆
 
     time_plans = {}
 
@@ -531,7 +531,7 @@ def weight_func3(road_l, road_mv, road_channel, isDuplex):
 
 
 def weight_func4(road_l, road_mv):
-    #考虑长度/速度/车道数
+    #考虑长度/速度
     weight = road_l / (road_mv)
     return weight
 
