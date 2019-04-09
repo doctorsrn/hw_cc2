@@ -410,7 +410,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     '''
     # 车辆发车策略分三种控制参数
     controlcarnum_preset = 15  #有预置车辆且该时刻有车
-    controlcarnum_free = 20  #有预置车辆且该时刻无车
+    controlcarnum_free = 30  #有预置车辆且该时刻无车
     controlcarnum_oridinary = 36  #无预置车辆
 
     time_plans = {}
