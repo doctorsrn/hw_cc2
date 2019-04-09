@@ -411,7 +411,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 车辆发车策略分三种控制参数
     controlcarnum_preset = 15  #有预置车辆且该时刻有车
     controlcarnum_free = 15  #有预置车辆且该时刻无车
-    controlcarnum_oridinary = 30  #无预置车辆
+    controlcarnum_oridinary = 35  #无预置车辆
 
     time_plans = {}
 
@@ -509,8 +509,6 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                 if (i % controlcarnum_oridinary) == 0:
                     time += 1
                 i += 1
-
-            # time += 1
 
 
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
