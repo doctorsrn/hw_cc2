@@ -35,7 +35,7 @@ def main():
     car_df = read_car_from_txt(car_path)
     road_df = read_road_from_txt(road_path)
     cross_df = read_cross_from_txt(cross_path)
-    pre_answer_df = read_preset_answer_from_txt(preset_answer_path, return_dict=False)
+    pre_answer_df = read_preset_answer_from_txt(preset_answer_path, return_dict=True)
 
     # process
 

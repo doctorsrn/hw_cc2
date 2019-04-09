@@ -1191,8 +1191,9 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
     # 深拷贝
     tempdict = copy.deepcopy(adl_list_w)
 
-    # 最优参数 9
-    shares = 5
+    # shares<1 相当于不刷新初始权重
+    # 目前来看一直不刷新权重效果好，稳定不易死锁
+    shares = 0.5
     interval = int(carnum / shares)
 
     paths_e = {}
