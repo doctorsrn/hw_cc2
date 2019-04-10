@@ -47,24 +47,11 @@ def get_time_plan4(car_df):
 def get_time_plan6(car_df):
     '''
     分批出发，凑够一定数量的车再发车，可能某个时刻不发车
-    并加入对发车数量的控制，开始为单调递减，其后为固定数量
-    最优参数 controlcarnum=16 a=2 b=0.15
-    :param car_df:
-    :return:
-    基本Dijkstra
-    加hc
-    cut_channel_level=1
-    cut_channel_level=2
-    16-1486
     '''
     time_plans = {}
 
-
-    # 根据每辆车的计划出发时间进行升序排列
-    # car_df_sort = car_df.sort_values(by='planTime', axis=0, ascending=True)
-    # 根据每辆车的计划出发时间进行升序排列 速度降序排列
+    # 根据每辆车的计划出发时间进行升序排列 速度降序排列 id升序
     car_df_sort = car_df.sort_values(by=['planTime', 'speed', 'id'], axis=0, ascending=[True, False, True])
-    # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
     # print(car_df_sort.head(50))
 
     carsum = car_df_sort.shape[0]
@@ -75,70 +62,54 @@ def get_time_plan6(car_df):
     idtime = -1
 
     """
-    #发车数量控制1 
-    #先单调递减，再固定
-    #最优参数 a=2 b=0.15 controlcarnum = 16
-    a = 2  # 控制最开始发车数量为a*controlcarnum
-    b = 0.15  # 控制b*carsum辆车以后发车数量固定为controlcarnum
-    controlcarnum = 16
+    # 发车数量控制1 
+    # 先单调递减，再固定
+    # 最优参数 a=2 b=0.15 controlcarnum = 16
+    # a = 2  # 控制最开始发车数量为a*controlcarnum
+    # b = 0.15  # 控制b*carsum辆车以后发车数量固定为controlcarnum
+    # controlcarnum = 16
     if i< b * carsum:
         control = int(controlcarnum * (a + ((1-a)*(i-1))/(b*carsum)))
     else:
         control = controlcarnum
     """
 
-
+    """
     # 发车数量控制2
     # 正弦发车
     # 最优参数 controlcarnum = 23 change = 3 interval = int(carsum/5)
     # controlcarnum = 23
     # change = 3
-    # interval = int(carsum/shares)
-    # control = controlcarnum+int(change * np.sin(i*(2 * np.pi)/interval))
+    interval = int(carsum/shares)
+    control = controlcarnum+int(change * np.sin(i*(2 * np.pi)/interval))
+    """
 
-    # 发车数量控制2
-    # 正弦发车
-    # 最优参数 controlcarnum = 23 change = 3 interval = int(carsum/9)
-    # controlcarnum = 20 18 m1 failed   m2 随controlcarnum减小而增大
-    # controlcarnum = 26 剪枝参数cut_channel_level=1, cut_speed_level=1 m1:608 m2:734
-    # controlcarnum = 30 剪枝参数cut_channel_level=1, cut_speed_level=1 m1:failed m2:failed
+    # if car_df['from'][10000] == 18:
+    #     # 发车数量控制3
+    #     # 正弦发车，基准值先降再固定
+    #     # 最优参数 a=5 b=0.4 controlcarnum = 23 change = 3  interval = int(carsum / 5)
+    #     a = 5  # 控制最开始发车数量为a*controlcarnum
+    #     b = 0.4  # 控制b*carsum辆车以后发车数量固定为controlcarnum
+    #     controlcarnum = 23
+    #     change = 3
+    #     shares = 5
+    # else:
+    #     # 发车数量控制3
+    #     # 正弦发车，基准值先降再固定
+    #     # 最优参数 a=5 b=0.4 controlcarnum = 23 change = 3  interval = int(carsum / 5)
+    #     a = 5  # 控制最开始发车数量为a*controlcarnum
+    #     b = 0.4  # 控制b*carsum辆车以后发车数量固定为controlcarnum
+    #     controlcarnum = 23
+    #     change = 3
+    #     shares = 5
 
-    # controlcarnum = 28 剪枝参数cut_channel_level=1, cut_speed_level=1 i > 350 m1:failed m2:748     change:4 m1 failed m2 736
-    # controlcarnum = 28 剪枝参数cut_channel_level=1, cut_speed_level=1 i > 550 m1:691 m2:938
-    # controlcarnum = 29 剪枝参数cut_channel_level=1, cut_speed_level=1 i > 550 m1:631 m2:failed
-    # controlcarnum = 29 剪枝参数cut_channel_level=1, cut_speed_level=1 i > 450 m1:732 m2:failed
-    # controlcarnum = 29 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 450 m1:failed m2:failed
-    # controlcarnum = 29 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 750 m1:732 m2:failed
-
-    # controlcarnum = 26 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 750 m1:failed m2:565
-    # controlcarnum = 26 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 450 m1:failed m2:failed
-    # controlcarnum = 26 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 850 m1:failed m2:531
-    # controlcarnum = 26 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 950 m1:failed m2:531
-
-    # controlcarnum = 26 interval = int(carsum/10) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 950 m1:562 m2:541  ---> best
-    # controlcarnum = 27 interval = int(carsum/10) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 950 m1:failed m2:522
-    # controlcarnum = 27 interval = int(carsum/11) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 950 m1:failed m2:527
-    # controlcarnum = 27 interval = int(carsum/11) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 650 m1:failed m2:528
-    # controlcarnum = 27 interval = int(carsum/11) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 450 m1:failed m2:failed
-    # controlcarnum = 27 interval = int(carsum/12) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 450 m1:failed m2:failed
-    # controlcarnum = 27 interval = int(carsum/13) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 450 m1:failed m2:550
-    # controlcarnum = 27 interval = int(carsum/13) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 850 m1:failed m2:530
-    # controlcarnum = 26 interval = int(carsum/13) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 850 m1:failed m2:550
-    # controlcarnum = 26 interval = int(carsum/11) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 850 m1:failed m2:544
-    # controlcarnum = 26 interval = int(carsum/11) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 1000 m1:541 m2:544 ---> best best
-    # controlcarnum = 26 interval = int(carsum/11) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 1200 m1:failed m2:544
-    # controlcarnum = 26 interval = int(carsum/12) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 1200 m1:563 m2:547 --> succeed
-    # controlcarnum = 27 interval = int(carsum/12) 剪枝参数cut_channel_level=2, cut_speed_level=1 i > 1200 m1:failed m2:536
-
-
-    # controlcarnum = 27 剪枝参数cut_channel_level=1, cut_speed_level=1 i > 350 m1:590 m2:754
 
     # 发车数量控制3
     # 正弦发车，基准值先降再固定
     # 最优参数 a=5 b=0.4 controlcarnum = 23 change = 3  interval = int(carsum / 5)
-    a = 5  # 控制最开始发车数量为a*controlcarnum
-    b = 0.4  # 控制b*carsum辆车以后发车数量固定为controlcarnum
-    controlcarnum = 23
+    a = 1  # 控制最开始发车数量为a*controlcarnum
+    b = 0  # 控制b*carsum辆车以后发车数量固定为controlcarnum
+    controlcarnum = 47
     change = 3
     shares = 5
     if i < b * carsum:
@@ -149,8 +120,7 @@ def get_time_plan6(car_df):
     control = controltemp + int(change * np.sin(i * (2 * np.pi) / interval))
 
 
-    print("get_time_plan6:")
-    for carID, pT in tqdm(zip(car_df_sort['id'], car_df_sort['planTime'])):
+    for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
         tempsave.append(carID)
         if (i % control) == 0:
             if pT <= time_last:
@@ -171,8 +141,11 @@ def get_time_plan6(car_df):
                 control = controlcarnum
             """
 
-            # #发车控制2
-            # control = controlcarnum + int(change * np.sin(i * (2 * np.pi) / interval))
+            """
+            #发车控制2
+            control = controlcarnum + int(change * np.sin(i * (2 * np.pi) / interval))
+            """
+
 
             #发车控制3
             if i < b * carsum:
@@ -180,6 +153,7 @@ def get_time_plan6(car_df):
             else:
                 controltemp = controlcarnum
             control = controltemp + int(change * np.sin(i * (2 * np.pi) / interval))
+
 
             time_last = idtime
 
@@ -191,7 +165,10 @@ def get_time_plan6(car_df):
 
     # print(car_df_sort.head(50))
 
+    print("max plantime: ", time_last)
+
     return time_plans, car_df_sort
+
 
 
 def get_time_plan7(car_df):
@@ -308,8 +285,8 @@ def get_time_plan5(car_df):
     分批出发，某一时刻发车数量多于一定数量顺延
     '''
     # 最优参数
-    controlcarnum = 50  # weight_factor=0.08 37 39:414 414  42:405 fail 41: 422 421  40:420 416
-                        # weight_factor=0.1  42: 415 fail
+    controlcarnum = 10
+
     temp = 0
 
     time_plans = {}
@@ -321,7 +298,7 @@ def get_time_plan5(car_df):
     # car_df_sort = car_df.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
     car_df_sort = car_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
                                      ascending=[False, False, True])
-    # print(car_df_sort.head(20))
+    print(car_df_sort.head(20))
 
     i = 1
     timemax_last = -1
@@ -332,26 +309,29 @@ def get_time_plan5(car_df):
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
         if flag == 0:
             flag = 1
-            idtime = max(timemax_last, pT) + 3000  # 1500 failed
+            idtime = max(timemax_last, pT) + 200  # 1500 failed
+            if idtime > timemax_last:
+                timemax_last = idtime
+            else:
+                pass
         idtime = max(timemax_last, pT)
         time_plans[carID] = [carID, idtime]
-        # car_df_sort.loc[carID, 'planTime'] = idtime  # 记录实际安排的出发时间
-        car_df_sort['planTime'][carID] = idtime
+        car_df_sort['planTime'][carID] = idtime   # 记录实际安排的出发时间
         if idtime > timemax_last:
-            timemax_last=idtime
+            timemax_last = idtime
         else:
             pass
 
         if (i % controlcarnum) == 0:
-            temp = temp+1
-            if temp < 3:   # 3     5
-                controlcarnum = 10
-            elif temp < 6: # 6     10 386 failed
-                controlcarnum = 7
-            else:
-                controlcarnum = 8   # 45  2-succeed 10-failed  6-succeed 8-failed
-                # 3 6 40s 42f 41s(410,414) 38s(416,415)
-                # 5 10 40f 386
+            # temp = temp+1
+            # if temp < 3:   # 3     5
+            #     controlcarnum = 10
+            # elif temp < 6: # 6     10 386 failed
+            #     controlcarnum = 7
+            # else:
+            #     controlcarnum = 8   # 45  2-succeed 10-failed  6-succeed 8-failed
+            #     # 3 6 40s 42f 41s(410,414) 38s(416,415)
+            #     # 5 10 40f 386
 
 
             timemax_last += 1
@@ -420,6 +400,124 @@ def get_time_plan8(car_df):
     return time_plans, car_df_sort
 
 
+def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
+    '''
+    分批出发，某一时刻发车数量多于一定数量顺延
+    总体上先发预置车辆，再发非预置车辆
+    发预置车辆时如果少于controlcarnum_preset加一些非预置车辆进去
+    如果某时刻没有预置车辆，也发controlcarnum_free非预置车辆进去
+    预置车辆规划完了，再发controlcarnum_oridinary非预置车辆
+    '''
+    # 车辆发车策略分三种控制参数
+    controlcarnum_preset = 15  #有预置车辆且该时刻有车
+    controlcarnum_free = 36  #有预置车辆且该时刻无车
+    controlcarnum_oridinary = 36  #无预置车辆
+
+    time_plans = {}
+
+    # 根据每辆车的速度降序排列 id升序
+    # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
+    # 根据每辆车是否预置 是否优先 速度降序排列 id升序
+    car_df_sort = car_df.sort_values(by=['preset', 'priority', 'speed', 'id'], axis=0,
+                                     ascending=[False, False, False, True])
+    # print(car_df_sort.head(20))
+
+    # 预置车辆根据每辆车出发时间升序 是否优先  id升序
+    cardf_preset_sort = car_preset_df.sort_values(by=['planTime', 'priority', 'id'], axis=0,
+                                                         ascending=[True, False, True])
+    # print(cardf_preset_sort.head(20))
+    # 非预置车辆根据每辆车是否优先 速度降序排列 id升序
+    cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority','speed', 'id'], axis=0,
+                                     ascending=[False, False, True])
+    # print(cardf_notpreset_sort.head(20))
+
+
+    #记录未规划出发时间车辆列表
+    preset_carlist = list(cardf_preset_sort['id'])   #保存还未安排过出发时间的预置车辆ID
+    print("preset carnum ", len(preset_carlist))
+    notpreset_carlist = list(cardf_notpreset_sort['id'])    #保存还未安排过出发时间的非预置车辆ID
+    print("not preset carnum ", len(notpreset_carlist))
+
+
+    time = 1
+    while preset_carlist != []:
+        #预置车辆发车数目大于carcontrolnum不安排其他车辆，否则将非预置车辆time时刻的安排其中
+        choosebyplantime_preset = cardf_preset_sort[cardf_preset_sort.planTime == time]
+        choosebyplantime_preset_carlist = list(choosebyplantime_preset['id'])
+
+        # print(choosebyplantime_preset.head(5))
+        presetnum_time = len(choosebyplantime_preset_carlist)
+        if presetnum_time > controlcarnum_preset:
+            print("preset carnum over carcontrolnum")
+
+            for carid in choosebyplantime_preset_carlist:
+                preset_carlist.remove(carid)  # 删除原始列表中的预置车辆
+                if preset_carlist == []:
+                    break
+        elif presetnum_time == 0:
+            print("now preset carnum is free")
+            choosebyplantime_notpreset = cardf_notpreset_sort[cardf_notpreset_sort.planTime == time]
+            choosebyplantime_notpreset_carlist = list(choosebyplantime_notpreset['id'])
+            # print(choosebyplantime_notpreset.head(5))
+
+            notpresetnum_time = len(choosebyplantime_notpreset_carlist)
+            for i in range(controlcarnum_free):
+                if i < notpresetnum_time:
+                    carid = choosebyplantime_notpreset_carlist[i]  # 选择time时刻cardf_notpreset_sort优先级最高的车辆
+                    # car_df_sort['planTime'][carid] = time  # 记录实际安排的出发时间
+                    notpreset_carlist.remove(carid)
+                else:
+                    print("choosebyplantime_notpreset_carlist is not enough")
+                    break
+        else:
+            print("preset carnum not enough")
+            choosebyplantime_notpreset = cardf_notpreset_sort[cardf_notpreset_sort.planTime == time]
+            choosebyplantime_notpreset_carlist = list(choosebyplantime_notpreset['id'])
+            # print(choosebyplantime_notpreset.head(5))
+
+            notpresetnum_time=len(choosebyplantime_notpreset_carlist)
+            for i in range(controlcarnum_preset - presetnum_time):
+                if i < notpresetnum_time:
+                    carid = choosebyplantime_notpreset_carlist[i]   #选择time时刻cardf_notpreset_sort优先级最高的车辆
+                    # car_df_sort['planTime'][carid] = time  # 记录实际安排的出发时间
+                    notpreset_carlist.remove(carid)
+                else:
+                    print("choosebyplantime_notpreset_carlist is not enough")
+                    break
+
+            for carid in choosebyplantime_preset_carlist:
+                preset_carlist.remove(carid)  # 删除原始列表中的预置车辆
+                if preset_carlist == []:
+                    break
+
+        time += 1
+
+    while notpreset_carlist != []:
+        i = 1
+        for carID, pT in zip(cardf_notpreset_sort['id'], cardf_notpreset_sort['planTime']):
+            if carID not in notpreset_carlist:   #只为在notpreset_carlist列表里的车辆规划出发时间
+                continue
+            else:
+                idtime = max(time, pT)
+                time_plans[carID] = [carID, idtime]
+                car_df_sort['planTime'][carID] = idtime  # 记录实际安排的出发时间
+                notpreset_carlist.remove(carID)
+                if notpreset_carlist == []:
+                    break
+                if idtime > time:
+                    time = idtime
+                if (i % controlcarnum_oridinary) == 0:
+                    time += 1
+                i += 1
+
+
+    for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
+        time_plans[carID] = [carID, pT]
+
+    print("max plantime: ", time)
+    return time_plans, car_df_sort
+
+
 def weight_func2(road_l, road_mv, road_channel):
     #考虑长度/速度/车道数
     weight = road_l / (road_mv*road_channel)
@@ -433,7 +531,7 @@ def weight_func3(road_l, road_mv, road_channel, isDuplex):
 
 
 def weight_func4(road_l, road_mv):
-    #考虑长度/速度/车道数
+    #考虑长度/速度
     weight = road_l / (road_mv)
     return weight
 
@@ -775,3 +873,45 @@ def timereplan2(car_df):
 
     return time_plans, car_df_sort
 
+def timereplan3(car_df):
+    '''
+    分批出发，某一时刻发车数量多于一定数量顺延
+    '''
+    # if car_df['from'][10000] == 18:
+    #     controlcarnum = 39
+    # else:
+    #     controlcarnum = 36
+
+    # 最优参数
+    controlcarnum = 36
+
+    time_plans = {}
+
+    # 根据每辆车的计划出发时间进行升序排列 速度降序排列 id升序
+    # car_df_sort = car_df.sort_values(by=['planTime', 'speed', 'id'], axis=0, ascending=[True, False, True])
+    # 根据每辆车的速度降序排列 id升序
+    # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
+    # print(car_df_sort.head(20))
+    # 根据每辆车的计划出发时间进行升序排列 速度降序排列 安排路径长度升序 id升序
+    car_df_sort = car_df.sort_values(by=['planTime', 'speed', 'pathlength', 'id'], axis=0,
+                                     ascending=[True, False, True, True])
+
+
+    i = 1
+    timemax_last = -1
+    idtime = -1
+    for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
+        idtime = max(timemax_last,pT)
+        time_plans[carID] = [carID, idtime]
+        car_df_sort['planTime'][carID] = idtime  # 记录实际安排的出发时间
+        if idtime > timemax_last:
+            timemax_last=idtime
+        else:
+            pass
+
+        if (i % controlcarnum) == 0:
+            timemax_last += 1
+        i += 1
+
+    print("max plantime: ", timemax_last)
+    return time_plans, car_df_sort
