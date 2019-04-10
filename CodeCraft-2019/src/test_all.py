@@ -5,7 +5,8 @@ import os
 # import numpy as np
 
 from util import *
-from util1 import *
+# from util1 import *
+import util1 as u1
 from IOModule import *
 from hp_finder import HamiltonianPath
 from concurrent.futures import ProcessPoolExecutor
@@ -35,6 +36,7 @@ def main():
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
 
     pre_paths = pre_answer_df['path'].to_dict()
+    pre_times = pre_answer_df['planTime'].to_dict()
     
     
 
@@ -53,22 +55,34 @@ def main():
     # final test
 
     start_time = time.clock()
-    time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
+    # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
+    time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     t1 = time.clock()
 
     # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
     # paths = getallpaths_dj_cw2(al, road_df, car_df_actual)
     # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    # paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
+    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     print(len(paths))
     t2 = time.clock()
 
-    # time_plans, paths = super_time_plan(paths, car_df_actual, road_df, cross_df, al)
+    # 合并paths和timePlan
+    paths.update(pre_paths)
+    print(paths.__len__())
+    origin_planTime = car_df_actual['planTime'].to_dict()
+    origin_planTime.update(pre_times)
+    print(origin_planTime.__len__())
+    for carID in list(car_df['id']):
+        car_df['planTime'][carID] = origin_planTime[carID]
+
+    time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_df, preset_test=False)
+    print(time_plans.__len__())
+    print(paths.__len__())
     t22 = time.clock()
-    print(car_not_preset_df['id'].__len__(), paths.__len__(), time_plans.__len__())
+    # print(car_not_preset_df['id'].__len__(), paths.__len__(), time_plans.__len__())
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)
     t3 = time.clock()
 

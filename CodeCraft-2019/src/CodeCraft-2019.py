@@ -36,9 +36,10 @@ def main():
     road_df = read_road_from_txt(road_path)
     cross_df = read_cross_from_txt(cross_path)
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path, return_dict=True)
+    pre_answer_d = read_preset_answer_from_txt(preset_answer_path, return_dict=False)
 
     # process
-    # al = build_adjacency_list(cross_df, road_df)
+    al = build_adjacency_list(cross_df, road_df)
 
     # build adjacency list
 
@@ -52,6 +53,9 @@ def main():
     # 取出预置车辆
     car_preset_df = car_df.loc[car_df['preset'] == 1].copy(deep=True)
     preset_carlist = list(car_preset_df['id'])
+
+    pre_paths = pre_answer_d['path'].to_dict()
+    pre_times = pre_answer_d['planTime'].to_dict()
     # 取出非预置车辆
     car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
     notpreset_carlist = list(car_not_preset_df['id'])
@@ -66,7 +70,7 @@ def main():
     # get time plans
 
     # 目前效果最好的为 get_time_plan5
-    time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
+    # time_plans, car_df_actual = u1.get_time_plan5(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan6(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan7(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan8(car_not_preset_df)
@@ -85,13 +89,26 @@ def main():
     # paths = get_all_paths_with_hc_cw(ad_l, road_df, car_df_actual)
     # paths = getallpaths_dj_cw(ad_l, road_df, car_df_actual)
     # paths = getallpaths_dj_cw2(ad_l, road_df, car_df_actual)
-    paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
+    # paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
     # paths = getallpaths_dj_cw3_slide(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
     # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
     # paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+
+
+    # 合并paths和timePlan
+    paths.update(pre_paths)
+    print(paths.__len__())
+    origin_planTime = car_df_actual['planTime'].to_dict()
+    origin_planTime.update(pre_times)
+    print(origin_planTime.__len__())
+    for carID in list(car_df['id']):
+        car_df['planTime'][carID] = origin_planTime[carID]
+
+    # replan
+    time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_d, preset_test=False)
 
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)
 
