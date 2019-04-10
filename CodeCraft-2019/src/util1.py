@@ -763,6 +763,64 @@ def cut_adl(adl, rc):
     return adl_cut
 
 
+def get_time_plan5(car_df):
+    '''
+    分批出发，某一时刻发车数量多于一定数量顺延
+    '''
+    # 最优参数
+    controlcarnum = 50  # weight_factor=0.08 37 39:414 414  42:405 fail 41: 422 421  40:420 416
+                        # weight_factor=0.1  42: 415 fail
+    temp = 0
+
+    time_plans = {}
+
+    # 根据每辆车的计划出发时间进行升序排列 速度降序排列 id升序
+    # car_df_sort = car_df.sort_values(by=['planTime', 'speed', 'id'], axis=0, ascending=[True, False, True])
+    # 根据每辆车的速度降序排列 id升序
+    # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
+    # car_df_sort = car_df.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
+    car_df_sort = car_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
+                                     ascending=[False, False, True])
+    # print(car_df_sort.head(20))
+
+    i = 1
+    timemax_last = -1
+    idtime = -1
+
+    flag = 0
+
+    for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
+        if flag == 0:
+            flag = 1
+            idtime = max(timemax_last, pT) + 3000  # 1500 failed
+        idtime = max(timemax_last, pT)
+        time_plans[carID] = [carID, idtime]
+        # car_df_sort.loc[carID, 'planTime'] = idtime  # 记录实际安排的出发时间
+        car_df_sort['planTime'][carID] = idtime
+        if idtime > timemax_last:
+            timemax_last=idtime
+        else:
+            pass
+
+        if (i % controlcarnum) == 0:
+            temp = temp+1
+            if temp < 3:   # 3     5
+                controlcarnum = 10
+            elif temp < 6: # 6     10 386 failed
+                controlcarnum = 7
+            else:
+                controlcarnum = 8   # 45  2-succeed 10-failed  6-succeed 8-failed
+                # 3 6 40s 42f 41s(410,414) 38s(416,415)
+                # 5 10 40f 386
+
+
+            timemax_last += 1
+        i += 1
+
+    print("max plantime: ", timemax_last)
+    return time_plans, car_df_sort
+
+
 def get_time_plan7(paths, car_df, road_df, cross_df):
     '''
     分批出发，凑够一定数量的车再发车，可能某个时刻不发车

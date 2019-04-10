@@ -38,6 +38,7 @@ def main():
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path, return_dict=True)
 
     # process
+    # al = build_adjacency_list(cross_df, road_df)
 
     # build adjacency list
 
@@ -65,7 +66,7 @@ def main():
     # get time plans
 
     # 目前效果最好的为 get_time_plan5
-    # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
+    time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan6(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan7(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan8(car_not_preset_df)
@@ -86,6 +87,11 @@ def main():
     # paths = getallpaths_dj_cw2(ad_l, road_df, car_df_actual)
     paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
     # paths = getallpaths_dj_cw3_slide(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
+    # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
+    # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
+    # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
+    # paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
+    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)
 
