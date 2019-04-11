@@ -2,6 +2,7 @@ import random
 import numpy as np
 from tqdm import tqdm
 import time
+import util1 as u1
 
 def tqdm(x):
     return x
@@ -409,8 +410,8 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     预置车辆规划完了，再发controlcarnum_oridinary非预置车辆
     '''
     # 车辆发车策略分三种控制参数
-    controlcarnum_preset = 17 # 15   #有预置车辆且该时刻有车
-    controlcarnum_free = 36  #有预置车辆且该时刻无车
+    controlcarnum_preset = 16  #17 15   #有预置车辆且该时刻有车
+    controlcarnum_free = 36  #36 有预置车辆且该时刻无车
     controlcarnum_oridinary = 38 # 36  #无预置车辆
 
     time_plans = {}
@@ -418,8 +419,10 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 根据每辆车的速度降序排列 id升序
     # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
     # 根据每辆车是否预置 是否优先 速度降序排列 id升序
-    car_df_sort = car_df.sort_values(by=['preset', 'priority', 'speed', 'id'], axis=0,
-                                     ascending=[False, False, False, True])
+    # car_df_sort = car_df.sort_values(by=['preset', 'priority', 'speed', 'id'], axis=0,
+    #                                  ascending=[False, False, False, True])
+    car_df_sort = car_df.sort_values(by=['preset', 'priority', 'timeCost', 'id'], axis=0,
+                                     ascending=[False, False, True, True])
     # print(car_df_sort.head(20))
 
     # 预置车辆根据每辆车出发时间升序 是否优先  id升序
@@ -427,8 +430,10 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                                                          ascending=[True, False, True])
     # print(cardf_preset_sort.head(20))
     # 非预置车辆根据每辆车是否优先 速度降序排列 id升序
-    cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority','speed', 'id'], axis=0,
-                                     ascending=[False, False, True])
+    # cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
+    #                                  ascending=[False, False, True])
+    cardf_notpreset_sort = car_not_preset_df.sort_values(by=['priority', 'timeCost', 'id'], axis=0,
+                                     ascending=[False, True, True])
     # print(cardf_notpreset_sort.head(20))
 
 
@@ -509,7 +514,6 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                 if (i % controlcarnum_oridinary) == 0:
                     time += 1
                 i += 1
-
 
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
         time_plans[carID] = [carID, pT]

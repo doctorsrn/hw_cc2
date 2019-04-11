@@ -14,7 +14,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 def main():
 
-    rpath = '../config1'
+    rpath = '../config2'
     cross_path = rpath + '/cross.txt'
     road_path = rpath + '/road.txt'
     car_path = rpath + '/car.txt'
@@ -34,6 +34,7 @@ def main():
     # print(car_df.shape)
 
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+    pre_answer_d = read_preset_answer_from_txt(preset_answer_path, return_dict=True)
 
     pre_paths = pre_answer_df['path'].to_dict()
     pre_times = pre_answer_df['planTime'].to_dict()
@@ -54,7 +55,27 @@ def main():
 
     # final test
 
+    # 记录预置车辆实际出发时间
+    # 将car_df_sort中预置车辆plantime改为presetAnswer中的数值
+    preset_carlist = list(car_preset_df['id'])
+    for carid in preset_carlist:
+        car_df['planTime'][carid] = pre_answer_d[carid]['planTime']
+        car_preset_df['planTime'][carid] = pre_answer_d[carid]['planTime']
+
     start_time = time.clock()
+
+    #  添加时间消耗参考项
+    # paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'], use_networkx=False)
+    paths = get_all_cars_paths_multi_processing(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'], process_num=8)
+    # exit(0)
+    car_df['timeCost'] = 0
+    car_not_preset_df['timeCost'] = 0
+    car_tcost, _ = u1.get_benchmark(paths, car_not_preset_df, road_df, cross_df)
+    for car_id, tcost in car_tcost.items():
+        car_df['timeCost'][car_id] = tcost
+        car_not_preset_df['timeCost'][car_id] = tcost
+        # car_df.loc[car_id, 'timeCost'] = tcost
+
     # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
     time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
@@ -69,18 +90,20 @@ def main():
     print(len(paths))
     t2 = time.clock()
 
-    # 合并paths和timePlan
-    paths.update(pre_paths)
-    print(paths.__len__())
-    origin_planTime = car_df_actual['planTime'].to_dict()
-    origin_planTime.update(pre_times)
-    print(origin_planTime.__len__())
-    for carID in list(car_df['id']):
-        car_df['planTime'][carID] = origin_planTime[carID]
+    # # 合并paths和timePlan
+    # paths.update(pre_paths)
+    # print(paths.__len__())
+    # origin_planTime = car_df_actual['planTime'].to_dict()
+    # origin_planTime.update(pre_times)
+    # print(origin_planTime.__len__())
+    # for carID in list(car_df['id']):
+    #     car_df['planTime'][carID] = origin_planTime[carID]
+    #
+    # time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_df, preset_test=False)
+    # print(time_plans.__len__())
+    # print(paths.__len__())
 
-    time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_df, preset_test=False)
-    print(time_plans.__len__())
-    print(paths.__len__())
+
     t22 = time.clock()
     # print(car_not_preset_df['id'].__len__(), paths.__len__(), time_plans.__len__())
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)

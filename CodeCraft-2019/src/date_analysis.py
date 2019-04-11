@@ -29,6 +29,9 @@ car_df = read_car_from_txt(car_path)
 #print(car_df.shape)
 
 pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+pre_car_planTime = pre_answer_df['planTime'].to_dict()
+for carID, planT in pre_car_planTime.items():
+    car_df['planTime'][carID] = planT
 
 # 对所有车辆进行分析
 speed_max = car_df.speed.max()

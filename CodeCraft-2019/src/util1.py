@@ -114,7 +114,7 @@ def get_benchmark(paths, car_df, road_df, cross_df, process_num=4):
     splice.append(carL_len)
 
     # 启动多进程
-    print('\nget_benchmark: ')
+    print('get_benchmark: ')
     try:
         p = ProcessPoolExecutor(max_workers=process_num)
         obj_l = []
@@ -279,12 +279,13 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=No
 
     ## 绘图线程
 
-    # 超参数
-    car_num = 25  # 每个时间片发车数量
-    cap_rate = 0  # 道路负载率
+
+    # car_num = 25  # 每个时间片发车数量
+    # cap_rate = 0  # 道路负载率
     cars_arrived_count = 0
-    car_debug = 0
-    rest_place_threshold = 3
+
+    # 超参数
+    rest_place_threshold = 5
 
     #    carlist = list(car_df['id'])
     print("start time and path planning:")

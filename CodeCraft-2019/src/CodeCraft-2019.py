@@ -67,6 +67,19 @@ def main():
         car_preset_df['planTime'][carid] = pre_answer_df[carid]['planTime']
 
 
+    #  添加时间消耗参考项
+    # paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'], use_networkx=False)
+    paths = get_all_cars_paths_multi_processing(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'], process_num=8)
+    # exit(0)
+    car_df['timeCost'] = 0
+    car_not_preset_df['timeCost'] = 0
+    car_tcost, _ = u1.get_benchmark(paths, car_not_preset_df, road_df, cross_df)
+    for car_id, tcost in car_tcost.items():
+        car_df['timeCost'][car_id] = tcost
+        car_not_preset_df['timeCost'][car_id] = tcost
+        # car_df.loc[car_id, 'timeCost'] = tcost
+
+
     # get time plans
 
     # 目前效果最好的为 get_time_plan5
@@ -98,17 +111,17 @@ def main():
     paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
 
-    # 合并paths和timePlan
-    paths.update(pre_paths)
-    print(paths.__len__())
-    origin_planTime = car_df_actual['planTime'].to_dict()
-    origin_planTime.update(pre_times)
-    print(origin_planTime.__len__())
-    for carID in list(car_df['id']):
-        car_df['planTime'][carID] = origin_planTime[carID]
-
-    # replan
-    time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_d, preset_test=False)
+    # # 合并paths和timePlan
+    # paths.update(pre_paths)
+    # print(paths.__len__())
+    # origin_planTime = car_df_actual['planTime'].to_dict()
+    # origin_planTime.update(pre_times)
+    # print(origin_planTime.__len__())
+    # for carID in list(car_df['id']):
+    #     car_df['planTime'][carID] = origin_planTime[carID]
+    #
+    # # replan
+    # time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_d, preset_test=False)
 
     answers = get_answer(car_not_preset_df['id'], paths, time_plans)
 

@@ -40,6 +40,7 @@ edge path: [5005, 5016, 5027, 5033]
 # import  pandas
 import copy
 from queue import Queue
+from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -1885,6 +1886,75 @@ def get_all_cars_paths(adl_list, carIDL, startL, endL, use_networkx=False):
             path_e = get_path_n2e(path_n, adl_list)
 
             paths[carID] = path_e
+
+    return paths
+
+
+def __get_paths(al, alw, carIDL_, startL_, endL_):
+    paths = {}
+    for carID, st, ed in zip(carIDL_, startL_, endL_):
+        path_n = shortest_path(alw, st, ed)
+
+        # 将规划得到的节点构成的路径转换为边构成的路径
+        path_e = get_path_n2e(path_n, al)
+
+        paths[carID] = path_e
+
+    return paths
+
+
+def get_all_cars_paths_multi_processing(adl_list, carIDL, startL, endL, process_num=4):
+    """
+    针对直接进行路径规划，假设不堵车的情况，得到理想情况下的运行时间
+    使用多进程实现
+    :param paths: 所有车规划出来的路径,数据格式:字典{carID： [edge path]}
+    :param car_df:
+    :param road_df:
+    :return:  car_time_cost： 每个车的时间消耗{carID: time cost}
+          all_time_cost: 所有车时间总消耗
+    """
+    # 检查传入的参数是否合理
+
+    if not len(carIDL) == len(startL) == len(endL):
+        raise Exception("input size of  carIDL, startL, endL not equal")
+
+    paths = {}
+    adl_list_w = convert_adl2adl_w(adl_list)
+
+
+    carL = list(carIDL)
+    carL_len = len(carL)
+
+    startL = list(startL)
+    endL = list(endL)
+
+    # 为多进程进行分割数据
+    N = int(carL_len / process_num)
+    splice = [N * x for x in range(process_num)]
+    splice.append(carL_len)
+
+    #    启动多进程
+    print('get_all_cars_paths_multi_processing: ')
+    # try:
+    if 1:
+        p = ProcessPoolExecutor(max_workers=process_num)
+        obj_l = []
+        for st, ed in zip(splice[:-1], splice[1:]):
+            obj = p.submit(__get_paths, adl_list, adl_list_w, carL[st:ed], startL[st:ed], endL[st:ed])
+            obj_l.append(obj)
+
+        p.shutdown(wait=True)
+
+        # 将多进程得到的结果进行整合
+
+        #    print([len(obj.result()) for obj in obj_l])
+        for obj in obj_l:
+            # print(len(obj.result()))
+            paths.update(obj.result())
+#            all_time_cost += obj.result()[1]
+#     except:
+#         print("Multi-processing failed, using single processing now")
+#         paths = __get_paths(adl_list, adl_list_w, carL, startL, endL)
 
     return paths
 
