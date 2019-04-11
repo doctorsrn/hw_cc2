@@ -414,7 +414,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 16 36 38 +5 ：3629 3674
     controlcarnum_preset = 16  #15   #有预置车辆且该时刻有车
     controlcarnum_free = 36  #36 有预置车辆且该时刻无车
-    controlcarnum_oridinary = 39 # 36  #无预置车辆
+    controlcarnum_oridinary = 50 # 36  #无预置车辆
 
     time_plans = {}
 
