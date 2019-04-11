@@ -428,9 +428,11 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 18 38 170 +5 +3：3309 3297
 
     # 16 36 60 +5 ：failed 3296
+
+    # 18 38 70 +5 开始时发车数增大：3276 3287
     controlcarnum_preset = 18  #15   #有预置车辆且该时刻有车
     controlcarnum_free = 38  #36 有预置车辆且该时刻无车
-    controlcarnum_oridinary = 65 # 36  #无预置车辆
+    controlcarnum_oridinary = 70 # 36  #无预置车辆
 
     time_plans = {}
 
@@ -514,7 +516,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                     break
 
         time += 1
-    time += 15  ##########延时有效
+    time += 5  ##########延时有效
     temp = 0
     while notpreset_carlist != []:
         i = 1
@@ -532,13 +534,13 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                     time = idtime
                 if (i % controlcarnum_oridinary) == 0:
                     time += 1
-                    # temp = temp+1
-                    # if temp < 3:
-                    #     controlcarnum_oridinary = 10
-                    # elif temp < 6:
-                    #     controlcarnum_oridinary = 7
-                    # else:
-                    #     controlcarnum_oridinary = 8
+                    temp = temp+1
+                    if temp < 4:
+                        controlcarnum_oridinary = 65
+                    elif temp < 10:
+                        controlcarnum_oridinary = 63
+                    else:
+                        controlcarnum_oridinary = 59
 
                 i += 1
 
