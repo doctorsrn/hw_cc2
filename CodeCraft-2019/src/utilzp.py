@@ -418,7 +418,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 18 38 55 +5 ：3297 3335  # 基本到达极限
     # 19 39 55 +5 ：3340 3323  # 提升不大
 
-    # 18 38 57 +5 ：3299 3309
+    # 18 38 57 +5 ：3299 3309  ############################################### 当前最优解
     # 18 38 59 +5 ：3285 3297
     # 18 38 60 +5 ：failed 3331 与16 36 60 +5 ：failed 3296相比，所有车总调度时间变短
     # 18 38 60 +10 ：failed 3334
@@ -429,7 +429,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
 
     # 16 36 60 +5 ：failed 3296
 
-    # 18 38 70 +5 开始时发车数增大：3276 3287
+    # 18 38 70 +5 开始时发车数增大：3276 3287  ############################################### 当前最优解
     # 18 38 80 +5 开始时发车数增大：3288 3295 非预设车辆开始时刻增加发车数策略提升不大
     # 18 38 70 +5 开始时发车数增大，延长大发车数时间段，效果不明显：3281 3316
     controlcarnum_preset = 18  #15   #有预置车辆且该时刻有车
@@ -536,10 +536,11 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                     time = idtime
                 if (i % controlcarnum_oridinary) == 0:
                     time += 1
+
                     temp = temp+1
-                    if temp < 10:
-                        controlcarnum_oridinary = 65
-                    elif temp < 20:
+                    if temp < 4:
+                        controlcarnum_oridinary = 65  # 都是玄学参数
+                    elif temp < 10:
                         controlcarnum_oridinary = 63
                     else:
                         controlcarnum_oridinary = 59
