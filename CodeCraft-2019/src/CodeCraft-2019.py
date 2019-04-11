@@ -66,7 +66,6 @@ def main():
         car_df['planTime'][carid] = pre_answer_df[carid]['planTime']
         car_preset_df['planTime'][carid] = pre_answer_df[carid]['planTime']
 
-
     #  添加时间消耗参考项
     # paths = get_all_cars_paths(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'], use_networkx=False)
     paths = get_all_cars_paths_multi_processing(al, car_not_preset_df['id'], car_not_preset_df['from'], car_not_preset_df['to'], process_num=8)
