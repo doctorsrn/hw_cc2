@@ -413,9 +413,17 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
     # 16 36 38：3674 3898
     # 16 36 38 +5 ：3629 3674
     # 16 36 50 +5 ：3381 3422
-    controlcarnum_preset = 16  #15   #有预置车辆且该时刻有车
-    controlcarnum_free = 36  #36 有预置车辆且该时刻无车
-    controlcarnum_oridinary = 55 # 36  #无预置车辆
+    # 16 36 55 +5 ：3341 3336
+    # 17 37 55 +5 ：3313 3334
+    # 18 38 55 +5 ：3297 3335  # 基本到达极限
+    # 19 39 55 +5 ：3340 3323  # 提升不大
+
+    # 18 38 57 +5 ：3299 3309  # 提升不大
+
+    # 16 36 60 +5 ：failed 3296
+    controlcarnum_preset = 18  #15   #有预置车辆且该时刻有车
+    controlcarnum_free = 38  #36 有预置车辆且该时刻无车
+    controlcarnum_oridinary = 57 # 36  #无预置车辆
 
     time_plans = {}
 
