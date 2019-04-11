@@ -420,11 +420,17 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
 
     # 18 38 57 +5 ：3299 3309
     # 18 38 59 +5 ：3285 3297
+    # 18 38 60 +5 ：failed 3331 与16 36 60 +5 ：failed 3296相比，所有车总调度时间变短
+    # 18 38 60 +10 ：failed 3334
+    # 18 38 65 +15 ：failed 3321 # map2提升不大
+
+    # 18 38 180 +5 +3：failed 3302
+    # 18 38 170 +5 +3：3309 3297
 
     # 16 36 60 +5 ：failed 3296
     controlcarnum_preset = 18  #15   #有预置车辆且该时刻有车
     controlcarnum_free = 38  #36 有预置车辆且该时刻无车
-    controlcarnum_oridinary = 59 # 36  #无预置车辆
+    controlcarnum_oridinary = 65 # 36  #无预置车辆
 
     time_plans = {}
 
@@ -508,7 +514,8 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                     break
 
         time += 1
-    time += 5  ##########延时有效
+    time += 15  ##########延时有效
+    temp = 0
     while notpreset_carlist != []:
         i = 1
         for carID, pT in zip(cardf_notpreset_sort['id'], cardf_notpreset_sort['planTime']):
@@ -525,6 +532,14 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                     time = idtime
                 if (i % controlcarnum_oridinary) == 0:
                     time += 1
+                    # temp = temp+1
+                    # if temp < 3:
+                    #     controlcarnum_oridinary = 10
+                    # elif temp < 6:
+                    #     controlcarnum_oridinary = 7
+                    # else:
+                    #     controlcarnum_oridinary = 8
+
                 i += 1
 
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):

@@ -1083,7 +1083,7 @@ def main():
     # print(pa[10013])
 
     # time_plan,  path_plan = super_time_plan(pa, car_df, road_df, cross_df, al)
-    time_plan, path_plan = super_time_plan(pre_paths, car_preset_df, road_df, cross_df, al, pre_answer_df)
+    time_plan, path_plan = super_time_plan(pre_paths, car_preset_df, road_df, cross_df, al, pre_answer_df, visualize=True)
     # print(path_plan[10013])
     print(time_plan.__len__())
     print(path_plan.__len__())

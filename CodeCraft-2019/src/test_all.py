@@ -50,6 +50,7 @@ def main():
     # print(car_not_preset_df.head())
 
     al = build_adjacency_list(cross_df, road_df)
+    ad_l = build_adjacency_list4(cross_df, road_df)
 
     # time_plans, paths = super_time_plan(pre_paths, car_preset_df, road_df, cross_df, al)
 
@@ -85,7 +86,8 @@ def main():
     # paths = getallpaths_dj_cw2(al, road_df, car_df_actual)
     # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
     # paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_d, preset_carlist)
+    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
     print(len(paths))
     t2 = time.clock()
