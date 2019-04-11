@@ -431,6 +431,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
 
     # 18 38 70 +5 开始时发车数增大：3276 3287
     # 18 38 80 +5 开始时发车数增大：3288 3295 非预设车辆开始时刻增加发车数策略提升不大
+    # 18 38 70 +5 开始时发车数增大，延长大发车数时间段，效果不明显：3281 3316
     controlcarnum_preset = 18  #15   #有预置车辆且该时刻有车
     controlcarnum_free = 38  #36 有预置车辆且该时刻无车
     controlcarnum_oridinary = 70 # 36  #无预置车辆
@@ -536,9 +537,9 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                 if (i % controlcarnum_oridinary) == 0:
                     time += 1
                     temp = temp+1
-                    if temp < 20:
+                    if temp < 10:
                         controlcarnum_oridinary = 65
-                    elif temp < 40:
+                    elif temp < 20:
                         controlcarnum_oridinary = 63
                     else:
                         controlcarnum_oridinary = 59
