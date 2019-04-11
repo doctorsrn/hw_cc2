@@ -101,13 +101,13 @@ def main():
     # paths = get_all_paths_with_hc_cw(ad_l, road_df, car_df_actual)
     # paths = getallpaths_dj_cw(ad_l, road_df, car_df_actual)
     # paths = getallpaths_dj_cw2(ad_l, road_df, car_df_actual)
-    # paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
+    paths = getallpaths_dj_cw3(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
     # paths = getallpaths_dj_cw3_slide(ad_l, road_df, car_df_actual, pre_answer_df, preset_carlist)
     # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     # paths = get_all_cars_paths(al, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
     # paths = get_all_paths_with_hc(al, road_df, car_df_actual['id'], car_df_actual['from'], car_df_actual['to'])
-    paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
+    # paths = get_all_paths_with_weight_update(al, road_df, car_df_actual, cross_df, pathType=2, update_w=True)
 
 
     # # 合并paths和timePlan
