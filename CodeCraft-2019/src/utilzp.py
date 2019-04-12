@@ -2,7 +2,7 @@ import random
 import numpy as np
 from tqdm import tqdm
 import time
-import util1 as u1
+# import util1 as u1
 
 def tqdm(x):
     return x
@@ -482,6 +482,7 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                 if preset_carlist == []:
                     break
         elif presetnum_time == 0:
+            # print("now time is ：", time)
             # print("now preset carnum is free")
             choosebyplantime_notpreset = cardf_notpreset_sort[cardf_notpreset_sort.planTime == time]
             choosebyplantime_notpreset_carlist = list(choosebyplantime_notpreset['id'])

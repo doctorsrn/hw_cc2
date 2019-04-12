@@ -1,4 +1,5 @@
 from util import *
+# from util import convert_adl2adl_w
 from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor
 from copy import deepcopy
@@ -7,6 +8,7 @@ import sys
 import os
 import numpy as np
 import profile
+import time
 
 def tqdm(x):
     return x
@@ -255,18 +257,18 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=No
 
     preset_car_planTime = car_preset_df['planTime'].to_dict()
 
-    # if preset_test is True:
-    #     cars_pool = car_preset_df.copy(deep=True)
-    #     cars_pool.drop(columns=['path'], inplace=True)  # 删除不使用的数据
-    #     cars_pool['priority'] = None
-    #     for carid in cars_pool['id']:
-    #         cars_pool.loc[carid, 'priority'] = car_isPriority[carid]
-    #         # cars_pool['priority'][carid] = car_isPriority[carid]
-    #     # print(cars_pool['priority'])
-    #     cars_pool.sort_values(by=['planTime', 'priority', 'id'], axis=0, ascending=[True, False, True])
-    # else:
-    cars_pool = car_df.copy(deep=True)
-    cars_pool.drop(columns=['from', 'to', 'speed'], inplace=True)  # 删除不使用的数据
+    if preset_test is True:
+        cars_pool = car_preset_df.copy(deep=True)
+        cars_pool.drop(columns=['path'], inplace=True)  # 删除不使用的数据
+        cars_pool['priority'] = None
+        for carid in cars_pool['id']:
+            cars_pool.loc[carid, 'priority'] = car_isPriority[carid]
+            # cars_pool['priority'][carid] = car_isPriority[carid]
+        # print(cars_pool['priority'])
+        # cars_pool.sort_values(by=['planTime', 'priority', 'id'], axis=0, ascending=[True, False, True])
+    else:
+        cars_pool = car_df.copy(deep=True)
+        cars_pool.drop(columns=['from', 'to', 'speed'], inplace=True)  # 删除不使用的数据
         # for carid in car_preset_df['id']:
         #     cars_pool.loc[carid, 'planTime'] = preset_car_planTime[carid]
         # cars_pool.sort_values(by=['planTime', 'priority', 'id'], axis=0, ascending=[True, False, True])
@@ -1074,8 +1076,16 @@ def main():
     # print(car_df.shape)
 
     pre_answer_df = read_preset_answer_from_txt(preset_answer_path)
+    pre_answer_d = read_preset_answer_from_txt(preset_answer_path, return_dict=True)
+
+    car_preset_df = car_df.loc[car_df['preset'] == 1].copy(deep=True)
 
     pre_paths = pre_answer_df['path'].to_dict()
+
+    preset_carlist = list(car_preset_df['id'])
+    for carid in preset_carlist:
+        car_df['planTime'][carid] = pre_answer_d[carid]['planTime']
+        car_preset_df['planTime'][carid] = pre_answer_d[carid]['planTime']
 
     car_not_preset_df = car_df.loc[car_df['preset'] != 1]
     car_preset_df = car_df.loc[car_df['preset'] == 1]

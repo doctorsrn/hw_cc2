@@ -78,8 +78,8 @@ def main():
         # car_df.loc[car_id, 'timeCost'] = tcost
 
     # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
-    # time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
-    time_plans, car_df_actual = u1.get_time_plan5(car_df)
+    time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
+    # time_plans, car_df_actual = u1.get_time_plan5(car_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     t1 = time.clock()
 
@@ -94,15 +94,15 @@ def main():
     t2 = time.clock()
 
     # # 合并paths和timePlan
-    # paths.update(pre_paths)
+    paths.update(pre_paths)
     # print(paths.__len__())
-    # origin_planTime = car_df_actual['planTime'].to_dict()
-    # origin_planTime.update(pre_times)
+    origin_planTime = car_df_actual['planTime'].to_dict()
+    origin_planTime.update(pre_times)
     # print(origin_planTime.__len__())
-    # for carID in list(car_df['id']):
-    #     car_df['planTime'][carID] = origin_planTime[carID]
+    for carID in list(car_df['id']):
+        car_df['planTime'][carID] = origin_planTime[carID]
     #
-    # time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_df, preset_test=False)
+    time_plans, paths = u1.super_time_plan(paths, car_df, road_df, cross_df, al, pre_answer_df, preset_test=False, visualize=True)
     # print(time_plans.__len__())
     # print(paths.__len__())
 

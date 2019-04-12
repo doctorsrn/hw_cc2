@@ -210,14 +210,14 @@ plt.ylabel('car to')
 ## 对车辆数据进行分析
 plt.figure(4, figsize=(6, 8))
 #第一行第一列图形
-ax1 = plt.subplot(3,2,1)
+ax1 = plt.subplot(2,1,1)
 #第一行第二列图形
-ax2 = plt.subplot(3,2,2)
+ax2 = plt.subplot(2,1,2)
 #第二行
-ax3 = plt.subplot(3,2,3)
-ax4 = plt.subplot(3,2,4)
-ax5 = plt.subplot(3,2,5)
-ax6 = plt.subplot(3,2,6)
+# ax3 = plt.subplot(3,2,3)
+# ax4 = plt.subplot(3,2,4)
+# ax5 = plt.subplot(3,2,5)
+# ax6 = plt.subplot(3,2,6)
 
 #car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
 #car_max_speed = car_df_sort.loc[car_df_sort['speed'] > 7]
