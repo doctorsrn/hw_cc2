@@ -172,7 +172,7 @@ def car_num_update(time_slice, load_rate=0, carsum=0):
     return control
 
 
-def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=None, preset_test=False, visualize=False):
+def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=None, preset_test=False, visualize=False, isReplan=False):
     """
 
     尝试基于时间迭代的实时路径规划与时间规划
@@ -515,7 +515,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=No
                                 # path replan
                                 if car_isPreset[car]:
                                     pass
-                                else:
+                                elif isReplan:
                                     new_path = path_replan_with_time(car, car_path, road_id, next_road, adl_cut, adl, road_from_to, car_to)
                                     paths[car] = new_path
                                 # print("go to next road failed...")
@@ -547,7 +547,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=No
                                 # path replan
                                 if car_isPreset[car]:
                                     pass
-                                else:
+                                elif isReplan:
                                      new_path = path_replan_with_time(car, car_path, road_id, next_road, adl_cut, adl,
                                                                       road_from_to, car_to)
                                      paths[car] = new_path
@@ -637,7 +637,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=No
                                 # path replan
                                 if car_isPreset[car]:
                                     pass
-                                else:
+                                elif isReplan:
                                     new_path = path_replan_with_time(car, car_path, road_id, next_road, adl_cut, adl,
                                                                  road_from_to, car_to)
                                     paths[car] = new_path
@@ -671,7 +671,7 @@ def super_time_plan(paths, car_df, road_df, cross_df, adl=None, car_preset_df=No
                                 # path replan
                                 if car_isPreset[car]:
                                     pass
-                                else:
+                                elif isReplan:
                                     new_path = path_replan_with_time(car, car_path, road_id, next_road, adl_cut, adl,
                                                                  road_from_to, car_to)
                                     paths[car] = new_path

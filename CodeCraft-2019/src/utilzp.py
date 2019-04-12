@@ -482,21 +482,30 @@ def get_time_plan9(car_df, car_preset_df, car_not_preset_df):
                 if preset_carlist == []:
                     break
         elif presetnum_time == 0:
-            # print("now time is ：", time)
-            # print("now preset carnum is free")
-            choosebyplantime_notpreset = cardf_notpreset_sort[cardf_notpreset_sort.planTime == time]
-            choosebyplantime_notpreset_carlist = list(choosebyplantime_notpreset['id'])
-            # print(choosebyplantime_notpreset.head(5))
-
-            notpresetnum_time = len(choosebyplantime_notpreset_carlist)
-            for i in range(controlcarnum_free):
-                if i < notpresetnum_time:
-                    carid = choosebyplantime_notpreset_carlist[i]  # 选择time时刻cardf_notpreset_sort优先级最高的车辆
-                    # car_df_sort['planTime'][carid] = time  # 记录实际安排的出发时间
-                    notpreset_carlist.remove(carid)
-                else:
-                    # print("choosebyplantime_notpreset_carlist is not enough")
-                    break
+            # # print("now time is ：", time)
+            # # print("now preset carnum is free")
+            # choosebyplantime_notpreset = cardf_notpreset_sort[cardf_notpreset_sort.planTime == time]
+            # choosebyplantime_notpreset_carlist = list(choosebyplantime_notpreset['id'])
+            # # print(choosebyplantime_notpreset.head(5))
+            #
+            # notpresetnum_time = len(choosebyplantime_notpreset_carlist)
+            # for i in range(controlcarnum_free):
+            #     if i < notpresetnum_time:
+            #         carid = choosebyplantime_notpreset_carlist[i]  # 选择time时刻cardf_notpreset_sort优先级最高的车辆
+            #         # car_df_sort['planTime'][carid] = time  # 记录实际安排的出发时间
+            #         notpreset_carlist.remove(carid)
+            #     else:
+            #         # print("choosebyplantime_notpreset_carlist is not enough")
+            #         break
+            choosebyplantime_notpreset_carlist = []
+            for ready_carid in notpreset_carlist:
+                if cardf_notpreset_sort['planTime'][ready_carid] <= time:
+                    choosebyplantime_notpreset_carlist.append(ready_carid)
+                    if len(choosebyplantime_notpreset_carlist) > controlcarnum_free:
+                        break
+            for carid in choosebyplantime_notpreset_carlist:
+                car_df_sort['planTime'][carid] = time
+                notpreset_carlist.remove(carid)
         else:
             # print("preset carnum not enough")
             choosebyplantime_notpreset = cardf_notpreset_sort[cardf_notpreset_sort.planTime == time]
