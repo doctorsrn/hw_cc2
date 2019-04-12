@@ -76,12 +76,6 @@ def __get_time_cost(paths, carL, car_df, road_df):
     # 得到理想情况下的最优时间： sum(path/max(car_speed, road_speed))
     car_time_cost = {}
     all_time_cost = 0
-
-    # 优化运行时间，将dataframe的列转化为字典
-    road_df_length = road_df['length'].to_dict()
-    cardf_speed = car_df['speed'].to_dict()
-    roaddf_speed = road_df['speed'].to_dict()
-
     for car in tqdm(carL):
         if not paths.__contains__(car):
             raise Exception("key not contains in dict")
@@ -90,7 +84,7 @@ def __get_time_cost(paths, carL, car_df, road_df):
         time = 0
         # TODO:之后考虑通过路口的时间消耗问题，利用判题器进行该超参数的搜索
         for edge in path:
-            time += road_df_length[edge] / min(roaddf_speed[edge], cardf_speed[car])
+            time += road_df['length'][edge] / max(road_df['speed'][edge], car_df['speed'][car])
 
         car_time_cost[car] = time
         all_time_cost += time
