@@ -78,7 +78,8 @@ def main():
         # car_df.loc[car_id, 'timeCost'] = tcost
 
     # time_plans, car_df_actual = get_time_plan5(car_not_preset_df)
-    time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
+    # time_plans, car_df_actual = get_time_plan9(car_df, car_preset_df, car_not_preset_df)
+    time_plans, car_df_actual = u1.get_time_plan5(car_df)
     # time_plans, car_df_actual = get_time_plan2(car_not_preset_df)
     t1 = time.clock()
 

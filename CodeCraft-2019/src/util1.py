@@ -817,7 +817,7 @@ def get_time_plan5(car_df):
     分批出发，某一时刻发车数量多于一定数量顺延
     '''
     # 最优参数
-    controlcarnum = 50  # weight_factor=0.08 37 39:414 414  42:405 fail 41: 422 421  40:420 416
+    controlcarnum = 70  # weight_factor=0.08 37 39:414 414  42:405 fail 41: 422 421  40:420 416
                         # weight_factor=0.1  42: 415 fail
     temp = 0
 
@@ -828,8 +828,13 @@ def get_time_plan5(car_df):
     # 根据每辆车的速度降序排列 id升序
     # car_df_sort = car_df.sort_values(by=['speed', 'id'], axis=0, ascending=[False, True])
     # car_df_sort = car_df.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
-    car_df_sort = car_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
-                                     ascending=[False, False, True])
+    car_not_preset_df = car_df.loc[car_df['preset'] != 1].copy(deep=True)
+    # car_df_sort = car_not_preset_df.sort_values(by=['priority', 'speed', 'id'], axis=0,
+    #                                  ascending=[False, False, True])
+
+    car_df_sort = car_not_preset_df.sort_values(by=['priority', 'timeCost', 'id'], axis=0, ascending=[False, True, True])
+    # car_df_sort = car_not_preset_df.sort_values(by=['preset', 'priority', 'timeCost', 'id'], axis=0,
+    #                                  ascending=[False, False, True, True])
     # print(car_df_sort.head(20))
 
     i = 1
@@ -841,11 +846,11 @@ def get_time_plan5(car_df):
     for carID, pT in zip(car_df_sort['id'], car_df_sort['planTime']):
         if flag == 0:
             flag = 1
-            timemax_last = max(timemax_last, pT) + 1500  # 1500 failed
+            timemax_last = max(timemax_last, pT) + 800  # 1500 failed
         idtime = max(timemax_last, pT)
         time_plans[carID] = [carID, idtime]
         # car_df_sort.loc[carID, 'planTime'] = idtime  # 记录实际安排的出发时间
-        car_df_sort['planTime'][carID] = idtime
+        car_df['planTime'][carID] = idtime
         if idtime > timemax_last:
             timemax_last=idtime
         else:
@@ -853,12 +858,12 @@ def get_time_plan5(car_df):
 
         if (i % controlcarnum) == 0:
             temp = temp+1
-            if temp < 3:   # 3     5
-                controlcarnum = 10
-            elif temp < 6: # 6     10 386 failed
-                controlcarnum = 7
+            if temp < 4:   # 3     5
+                controlcarnum = 65
+            elif temp < 10: # 6     10 386 failed
+                controlcarnum = 63
             else:
-                controlcarnum = 8   # 45  2-succeed 10-failed  6-succeed 8-failed
+                controlcarnum = 59   # 45  2-succeed 10-failed  6-succeed 8-failed
                 # 3 6 40s 42f 41s(410,414) 38s(416,415)
                 # 5 10 40f 386
 
@@ -867,7 +872,7 @@ def get_time_plan5(car_df):
         i += 1
 
     print("max plantime: ", timemax_last)
-    return time_plans, car_df_sort
+    return time_plans, car_df
 
 
 def get_time_plan7(paths, car_df, road_df, cross_df):
