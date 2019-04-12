@@ -1182,8 +1182,16 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
     # 达到interval时恢复原来的权重
 
     # 根据每辆车的计划出发时间进行升序排列 是否优先 速度降序排列 id升序排列
-    car_df_sort = cardf.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
+    # car_df_sort = cardf.sort_values(by=['planTime', 'priority', 'speed', 'id'], axis=0, ascending=[True, False, False, True])
+    car_df_sort = cardf.sort_values(by=['planTime', 'priority', 'timeCost', 'id'], axis=0,
+                                    ascending=[True, False, True, True])
     # print(car_df_sort.head(10))
+
+    # 优化运行时间，将dataframe的列转化为字典
+    cardf_speed = cardf['speed'].to_dict()
+    roaddf_speed = road_df['speed'].to_dict()
+    road_df_channel = road_df['channel'].to_dict()
+
 
     carIDL = car_df_sort['id']
     startL = car_df_sort['from']
@@ -1228,7 +1236,7 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
             tempdict = copy.deepcopy(adl_list_w)
         else:
 
-            carspeed = cardf['speed'][carID]
+            carspeed = cardf_speed[carID]
             for k in range(len(path_n) - 1):
                 cross_last = path_n[k]
                 cross_next = path_n[k + 1]
@@ -1236,9 +1244,9 @@ def getallpaths_dj_cw3(adl_list, road_df, cardf, pre_answer_df, preset_carlist):
 
                 roadname = adl_list[cross_last][cross_next][0]
                 # print(roadname)
-                maxspeed = min(road_df['speed'][roadname], carspeed)
+                maxspeed = min(roaddf_speed[roadname], carspeed)
 
-                addvalue = factor/(maxspeed*road_df['channel'][roadname])
+                addvalue = factor/(maxspeed*road_df_channel[roadname])
 
                 tempdict[cross_last][cross_next] += addvalue
 
