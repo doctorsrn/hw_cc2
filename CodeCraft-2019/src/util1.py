@@ -51,7 +51,7 @@ def plot_durations(y):
     plt.plot(y[:, 0], y[:, 1])
 
     plt.sca(ax2)
-    plt.title('cars to go ')
+    plt.title('un-preset cars to go ')
     plt.xlabel('time slice')
     plt.ylabel('cars num')
     plt.plot(y[:, 0], y[:, 2])
@@ -1056,7 +1056,7 @@ def get_time_plan9(paths, car_df, road_df, cross_df):
 
 
 def main():
-    rpath = '../config2'
+    rpath = '../config1'
     cross_path = rpath + '/cross.txt'
     road_path = rpath + '/road.txt'
     car_path = rpath + '/car.txt'

@@ -1,0 +1,72 @@
+#复赛
+1  build_adjacency_list+build_adjacency_list4+get_time_plan9+getallpaths_dj_cw3
+只变get_time_plan9参数
+controlcarnum_preset controlcarnum_free controlcarnum_ordinary timedelay  timeaddvalue
+# 16 36 38：3674 3898
+    # 16 36 38 +5 ：3629 3674
+    # 16 36 50 +5 ：3381 3422
+    # 16 36 55 +5 ：3341 3336
+    # 17 37 55 +5 ：3313 3334
+    # 18 38 55 +5 ：3297 3335  # 基本到达极限
+    # 19 39 55 +5 ：3340 3323  # 提升不大
+
+    # 18 38 57 +5 ：3299 3309  ############################################### 当前最优解
+    # 18 38 59 +5 ：3285 3297
+    # 18 38 60 +5 ：failed 3331 与16 36 60 +5 ：failed 3296相比，所有车总调度时间变短
+    # 18 38 60 +10 ：failed 3334
+    # 18 38 65 +15 ：failed 3321 # map2提升不大
+
+    # 18 38 180 +5 +3：failed 3302
+    # 18 38 170 +5 +3：3309 3297
+
+    # 16 36 60 +5 ：failed 3296
+
+    # 18 38 70 +5 开始时发车数增大：3276 3287  ############################################### 当前最优解
+    # 18 38 80 +5 开始时发车数增大：3288 3295 非预设车辆开始时刻增加发车数策略提升不大
+    # 18 38 70 +5 开始时发车数增大，延长大发车数时间段，效果不明显：3281 3316
+
+2  build_adjacency_list+build_adjacency_list4+get_time_plan9+getallpaths_dj_cw3
+   get_time_plan9  18 38 55 +5
+   getallpaths_dj_cw3
+   shares  factor   score
+   0.5 1.0   3297 3335
+   2   1.0   3299  3332
+   5   1.0   failed 3280
+   10  1.0   失败   3285
+   50  1.0   failed  failed
+
+3  build_adjacency_list+build_adjacency_list4+get_time_plan9+getallpaths_dj_cw3
+controlcarnum_preset controlcarnum_free controlcarnum_ordinary timedelay  timeaddvalue
+   18 38 55 5 1  failed
+   18  32 55 5 1  failed
+   18  29 55 5 1  2815+2807
+   18  25 55 5 1  2859+2857
+   18  15 55 5 1  2970+2994
+   18  10 55 5 1  failed
+   18  10 55 100 1  failed
+   18 7 55 5 1 3168+3200
+   18 5 55 5 1 3241+3276
+
+4  build_adjacency_list+build_adjacency_list4+get_time_plan9+getallpaths_dj_cw3_slide
+   18  29 55 5 1  2815+2807
+   以前面最好成绩为基础，只调getallpaths_dj_cw3_slide中的参数
+   shares factor alpha period score
+   0.5 1 0.9 100   2811+2795
+   0.5 1 0.8 100   2806+2815
+   0.5 1 0.7 100   2804+2825
+
+
+可视化功能的使用：
+1.对数据集进行可视化分析：
+运行data_analysis.py
+
+2.针对presetAnswer.txt的可视化：
+在目录hw_cc2/CodeCraft-2019/src，运行：python3 util1.py
+可以修改util1.py中的参数针对不同的地图进行。
+
+3.针对时间规划和路径规划后的结果进行可视化：
+在目录hw_cc2/CodeCraft-2019/src，运行：python3 test_all.py
+可以修改test_all.py中的参数针对不同的地图进行。
+
+
+

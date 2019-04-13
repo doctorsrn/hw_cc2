@@ -1364,7 +1364,7 @@ def getallpaths_dj_cw3_slide(adl_list, road_df, cardf, pre_answer_df, preset_car
     factor = 1.0
 
     #指数平滑因子
-    alpha = 0.8
+    alpha = 0.9
     #更新时间周期
     period = 100
 
